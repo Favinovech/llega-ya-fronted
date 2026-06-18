@@ -1,0 +1,38 @@
+// ── Paleta principal ─────────────────────────────
+$verde:   #2e7d32;
+$verde2:  #1b5e20;
+$verde3:  #388e3c;
+$pale:    #f0fdf4;
+$pale2:   #e8f5e9;
+
+// ── Neutros ───────────────────────────────────────
+$negro:   #111827;
+$gris:    #6b7280;
+$gris2:   #9ca3af;
+$border:  #e5e7eb;
+$bg:      #f9fafb;
+$white:   #ffffff;
+
+// ── Estados ───────────────────────────────────────
+$danger:  #dc2626;
+$warning: #f59e0b;
+$info:    #3b82f6;
+$success: #16a34a;
+
+// ── Tipografía ────────────────────────────────────
+$font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+
+// ── Espaciado ─────────────────────────────────────
+$radius:   14px;
+$radius-s:  8px;
+$radius-l: 20px;
+$sombra:   0 2px 16px rgba(0,0,0,.07);
+$sombra-l: 0 8px 32px rgba(0,0,0,.1);
+$max-w:    1200px;
+
+// ── Hero mixin (reutilizable en cada página) ──────
+@mixin page-hero($titulo, $sub:'') {
+  background: linear-gradient(160deg, $verde2 0%, $verde 60%, $verde3 100%);
+  padding: 56px 32px;
+  color: white;
+}

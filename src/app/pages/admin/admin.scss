@@ -1,0 +1,59 @@
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 32px; height: 60px; background: #6fb07f; color: white;
+  .navbar-logo { font-size: 1.2rem; font-weight: 800; }
+}
+.btn-back {
+  color: white; text-decoration: none; background: rgba(255,255,255,.2);
+  padding: 8px 16px; border-radius: 8px; font-size: .9rem;
+  &:hover { background: rgba(255,255,255,.35); }
+}
+.admin-content { padding: 40px; }
+h2 { margin-bottom: 24px; font-size: 1.4rem; }
+.success-msg { color: #6fb07f; font-weight: 600; margin-bottom: 16px; }
+.error-msg   { color: #e53935; margin-bottom: 16px; }
+.cargando    { color: #888; }
+table {
+  width: 100%; border-collapse: collapse; background: white;
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+th {
+  background: #6fb07f; color: white; padding: 14px 16px;
+  text-align: left; font-size: .85rem;
+}
+td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: .9rem; }
+tr:last-child td { border-bottom: none; }
+select {
+  padding: 6px 10px; border-radius: 8px;
+  border: 1.5px solid #ddd; cursor: pointer;
+}
+.badge {
+  padding: 4px 12px; border-radius: 20px;
+  font-size: .8rem; font-weight: 700; text-transform: uppercase;
+}
+
+.toast-popup {
+  visibility: hidden; min-width: 250px; color: #fff; text-align: center;
+  border-radius: 8px; padding: 16px; position: fixed; z-index: 1000;
+  right: 20px; bottom: 0px; font-size: 15px; font-weight: 500;
+  opacity: 0; transition: opacity 0.4s, bottom 0.4s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+  &.success { background-color: #2e7d32; }
+  &.error { background-color: #d32f2f; }
+
+  &.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 30px; /* Sube suavemente cuando está activo */
+  }
+}
+
+.badge-admin      { background: #fde68a; color: #92400e; }
+.badge-estado { cursor: pointer; transition: transform 0.2s, opacity 0.2s;}
+.badge-estado:hover { transform: scale(1.05); opacity: 0.8; }
+.badge-cliente    { background: #bbf7d0; color: #065f46; }
+.badge-repartidor { background: #bfdbfe; color: #1e40af; }
+.activo   { color: #6fb07f; font-weight: 600; }
+.inactivo { color: #e53935; font-weight: 600; }

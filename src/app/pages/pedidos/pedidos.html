@@ -1,0 +1,208 @@
+<app-navbar></app-navbar>
+
+<main class="pedidos-page">
+
+  <!-- HERO -->
+  <section class="pedidos-hero">
+    <div class="hero-inner">
+      <span class="hero-label">SEGUIMIENTO DE PEDIDOS</span>
+      <h1>Mis pedidos</h1>
+      <p>Sigue el estado de tus pedidos en tiempo real.</p>
+    </div>
+  </section>
+
+  <section class="pedidos-layout">
+
+    <!-- Filtros -->
+    <div class="filtros-pedidos">
+      <button [class.active]="filtroEstado === 'todos'"    (click)="filtroEstado = 'todos'">Todos</button>
+      <button [class.active]="filtroEstado === 'activos'"  (click)="filtroEstado = 'activos'">🔥 Activos</button>
+      <button [class.active]="filtroEstado === 'pendiente'"(click)="filtroEstado = 'pendiente'">📝 Pendientes</button>
+      <button [class.active]="filtroEstado === 'en_camino'"(click)="filtroEstado = 'en_camino'">🛵 En camino</button>
+      <button [class.active]="filtroEstado === 'entregado'"(click)="filtroEstado = 'entregado'">📦 Entregados</button>
+      <button [class.active]="filtroEstado === 'cancelado'"(click)="filtroEstado = 'cancelado'">❌ Cancelados</button>
+      <span class="auto-refresh">🔄 Actualizando cada 10s</span>
+    </div>
+
+    <!-- Loading -->
+    <div class="empty-box" *ngIf="cargando">
+      <div class="spinner"></div>
+      <p>Cargando pedidos…</p>
+    </div>
+
+    <!-- Vacío -->
+    <div class="empty-box" *ngIf="!cargando && pedidosFiltrados.length === 0">
+      <div class="empty-icon">📭</div>
+      <h3>No hay pedidos en esta categoría</h3>
+      <p *ngIf="filtroEstado === 'todos'">
+        Cuando hagas tu primer pedido aparecerá aquí.
+      </p>
+    </div>
+
+    <!-- Tarjetas de pedidos -->
+    <div class="pedidos-grid" *ngIf="!cargando && pedidosFiltrados.length > 0">
+      <div class="pedido-card"
+           *ngFor="let p of pedidosFiltrados"
+           [class.cancelado]="p.estado === 'cancelado'"
+           (click)="abrirDetalle(p)">
+
+        <!-- Header de la card -->
+        <div class="card-header">
+          <div>
+            <strong>Pedido #{{ p.id }}</strong>
+            <span class="card-fecha">{{ p.created_at | date:'dd/MM/yy HH:mm' }}</span>
+          </div>
+          <span class="badge-estado" [attr.data-estado]="p.estado">
+            {{ iconoEstado(p.estado) }} {{ p.estado_label }}
+          </span>
+        </div>
+
+        <!-- Info del negocio -->
+        <div class="card-negocio">
+          <strong>{{ p.negocio_info?.nombre ?? 'Negocio' }}</strong>
+          <span>{{ p.detalles.length }} producto(s) · S/ {{ p.total }}</span>
+        </div>
+
+        <!-- HU08 criterio 1: Estados en tiempo real -->
+        <ng-container *ngIf="p.estado !== 'cancelado'; else fueCancelado">
+          <div class="progreso-wrap">
+            <div class="progreso-bar">
+              <div class="progreso-fill" [style.width.%]="porcentajeProgreso(p)"></div>
+            </div>
+            <div class="progreso-pasos">
+              <div class="paso"
+                   *ngFor="let paso of pasos; let i = index"
+                   [class.activo]="i <= pasoActual(p)"
+                   [class.actual]="i === pasoActual(p)">
+                <div class="paso-icono">{{ paso.icono }}</div>
+                <span>{{ paso.label }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #fueCancelado>
+          <div class="cancel-msg">❌ Este pedido fue cancelado.</div>
+        </ng-template>
+
+        <!-- Dirección -->
+        <div class="card-direccion">📍 {{ p.direccion_entrega }}</div>
+
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<app-footer></app-footer>
+
+<!-- ═════════════════════════════════ -->
+<!-- MODAL: DETALLE / MAPA / HISTORIAL  -->
+<!-- ═════════════════════════════════ -->
+<div class="modal-backdrop" *ngIf="pedidoSeleccionado" (click)="cerrarDetalle()">
+  <div class="modal-pedido" (click)="$event.stopPropagation()">
+
+    <header>
+      <div>
+        <h3>Pedido #{{ pedidoSeleccionado.id }}</h3>
+        <small>{{ pedidoSeleccionado.negocio_info?.nombre }}</small>
+      </div>
+      <button class="modal-close" (click)="cerrarDetalle()">✕</button>
+    </header>
+
+    <div class="modal-body">
+
+      <!-- Estado actual -->
+      <div class="estado-actual" [attr.data-estado]="pedidoSeleccionado.estado">
+        <div class="estado-actual-icono">{{ iconoEstado(pedidoSeleccionado.estado) }}</div>
+        <div>
+          <strong>{{ pedidoSeleccionado.estado_label }}</strong>
+          <span>Actualizado: {{ pedidoSeleccionado.updated_at | date:'dd/MM HH:mm' }}</span>
+        </div>
+      </div>
+
+      <!-- HU08 criterio 3: Mapa -->
+      <div class="seccion">
+        <h4>📍 Ubicación</h4>
+        <div id="mapa-pedido" class="mapa"></div>
+        <p class="mapa-direccion">{{ pedidoSeleccionado.direccion_entrega }}</p>
+      </div>
+
+      <!-- Productos -->
+      <div class="seccion">
+        <h4>📋 Productos</h4>
+        <ul class="lista-productos">
+          <li *ngFor="let d of pedidoSeleccionado.detalles">
+            <span>{{ d.cantidad }}× Producto #{{ d.producto }}</span>
+            <span>S/ {{ d.precio_unitario }}</span>
+          </li>
+        </ul>
+        <div class="total-line">
+          <strong>Total</strong>
+          <strong>S/ {{ pedidoSeleccionado.total }}</strong>
+        </div>
+      </div>
+
+      <!-- Historial -->
+      <div class="seccion" *ngIf="pedidoSeleccionado.historial_estados?.length">
+        <h4>🕓 Historial</h4>
+        <ul class="timeline-pedido">
+          <li *ngFor="let h of pedidoSeleccionado.historial_estados">
+            <div class="t-dot"></div>
+            <div class="t-content">
+              <strong>{{ h.estado_nuevo_label }}</strong>
+              <span class="t-fecha">{{ h.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+              <span class="t-meta" *ngIf="h.comentario">{{ h.comentario }}</span>
+              <span class="t-meta">Por {{ h.cambiado_por_nombre }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <footer>
+      <button class="btn-danger"
+              *ngIf="pedidoSeleccionado.estado === 'pendiente'"
+              (click)="abrirModalCancelacion(pedidoSeleccionado, $event)">
+        Cancelar pedido
+      </button>
+      <button class="btn-primary" (click)="cerrarDetalle()">Cerrar</button>
+    </footer>
+  </div>
+
+<!-- ═════════════════════════════════ -->
+<!-- MODAL: CANCELAR PEDIDO            -->
+<!-- ═════════════════════════════════ -->
+<div class="modal-backdrop" *ngIf="mostrarModalCancelacion" (click)="cerrarModalCancelacion()">
+  <div class="modal-cancelacion" (click)="$event.stopPropagation()">
+
+    <header>
+      <h3>Cancelar pedido #{{ pedidoSeleccionado?.id }}</h3>
+      <button class="modal-close" (click)="cerrarModalCancelacion()">✕</button>
+    </header>
+
+    <div class="modal-body">
+      <p>¿Estás seguro que deseas cancelar este pedido?</p>
+
+      <div class="campo-motivo">
+        <label>Motivo de cancelación <span class="opcional">(opcional)</span></label>
+        <textarea
+          [(ngModel)]="motivoCancelacion"
+          placeholder="Ej: Me equivoqué en el pedido, ya no lo necesito..."
+          rows="3">
+        </textarea>
+      </div>
+    </div>
+
+    <footer>
+      <button class="btn-outline" (click)="cerrarModalCancelacion()">
+        No, mantener pedido
+      </button>
+      <button class="btn-danger" (click)="confirmarCancelacion()">
+        Sí, cancelar pedido
+      </button>
+    </footer>
+
+  </div>
+</div>
+</div>

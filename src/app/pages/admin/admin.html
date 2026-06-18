@@ -1,0 +1,57 @@
+<nav class="navbar">
+  <div class="navbar-logo">LlegaYa — Admin</div>
+  <a routerLink="/home" class="btn-back">← Volver al inicio</a>
+</nav>
+
+<div class="admin-content">
+  <h2>👥 Gestión de Usuarios</h2>
+
+  <div class="cargando"    *ngIf="cargando">Cargando usuarios...</div>
+
+  <table *ngIf="!cargando && usuarios.length > 0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Rol Actual</th>
+        <th>Cambiar Rol</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of usuarios">
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }} {{ u.apellido }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.telefono || '—' }}</td>
+        
+        <td>
+          <span class="badge" [class]="'badge-' + (u.rol?.nombre || u.rol)">
+            {{ u.rol?.nombre || u.rol | uppercase }}
+          </span>
+        </td>
+        
+        <td>
+          <select (change)="cambiarRol(u, $event)" [value]="u.rol?.nombre || u.rol">
+            <option *ngFor="let r of roles" [value]="r" [selected]="r === (u.rol?.nombre || u.rol)"> 
+              {{ r | uppercase }}</option>
+          </select>
+        </td>
+        
+        <td>
+          <span [class]="u.activo ? 'activo' : 'inactivo'" class="badge badge-estado"
+          (click)="cambiarEstado(u)" title="Haz clic para cambiar el estado">
+            {{ u.activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!cargando && usuarios.length === 0" class="no-data">
+    <p>No hay usuarios registrados en el sistema.</p>
+  </div>
+
+</div>

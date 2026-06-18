@@ -1,0 +1,145 @@
+$verde: #2e7d32; $verde2: #1b5e20; $verde3: #388e3c;
+$negro: #111827; $gris: #6b7280; $border: #e5e7eb; $pale: #f0fdf4;
+$font: 'Inter','Segoe UI',system-ui,sans-serif;
+
+.page { background: #f9fafb; min-height: calc(100vh - 64px); font-family: $font; }
+
+// ── Hero ──────────────────────────────────────────
+.page-hero {
+  background: linear-gradient(160deg, $verde2 0%, $verde 60%, $verde3 100%);
+  padding: 56px 32px;
+}
+.page-hero-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  .eyebrow { font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#a5d6a7; margin-bottom:8px; }
+  h1 { font-size:2.2rem; font-weight:900; color:white; margin-bottom:8px; }
+  .hero-sub { color:#c8e6c9; font-size:1rem; }
+}
+
+// ── Botón carrito flotante ─────────────────────────
+.btn-carrito {
+  display: flex; align-items: center; gap: 8px;
+  background: white; color: $verde; border: none;
+  padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .2s; font-family: $font; position: relative;
+  svg { width: 18px; height: 18px; }
+  &:hover { background: #f0fdf4; transform: translateY(-2px); }
+  .badge {
+    background: #dc2626; color: white; font-size: .65rem; font-weight: 800;
+    min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px;
+  }
+}
+
+// ── Contenido ──────────────────────────────────────
+.content {
+  max-width: 1200px; margin: 0 auto; padding: 40px 32px;
+}
+
+// ── Toolbar ────────────────────────────────────────
+.toolbar {
+  display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;
+}
+.search-wrap {
+  display: flex; align-items: center; gap: 10px;
+  background: white; border: 1.5px solid $border; border-radius: 10px; padding: 10px 16px;
+  max-width: 400px;
+  svg { width: 18px; height: 18px; color: #9ca3af; flex-shrink: 0; }
+  input { border: none; outline: none; font-size: .9rem; color: $negro; background: transparent; flex: 1; font-family: $font; &::placeholder { color: #9ca3af; } }
+}
+.cat-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill {
+  padding: 7px 16px; border-radius: 20px; border: 1.5px solid $border;
+  background: white; color: $gris; font-size: .82rem; font-weight: 500; cursor: pointer; transition: all .18s; font-family: $font;
+  &:hover { border-color: $verde; color: $verde; }
+  &.active { background: $verde; color: white; border-color: $verde; font-weight: 700; }
+}
+
+// ── Grid negocios ──────────────────────────────────
+.negocios-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.negocio-card {
+  display: flex; align-items: center; gap: 16px;
+  background: white; border: 1.5px solid $border; border-radius: 14px; padding: 18px 16px;
+  cursor: pointer; transition: all .2s;
+  &:hover { border-color: #a7f3d0; box-shadow: 0 6px 24px rgba(46,125,50,.1); transform: translateY(-2px); .arrow { color: $verde; } }
+}
+.negocio-icon-wrap {
+  width: 44px; height: 44px; background: $pale; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  svg { width: 22px; height: 22px; stroke: $verde; }
+}
+.negocio-info {
+  flex: 1; display: flex; flex-direction: column; gap: 3px;
+  strong { font-size: .95rem; font-weight: 700; color: $negro; }
+  .negocio-cat { font-size: .72rem; font-weight: 700; color: $verde; text-transform: uppercase; letter-spacing: .04em; }
+  .negocio-dir { font-size: .78rem; color: $gris; }
+}
+.arrow { width: 18px; height: 18px; color: #d1d5db; transition: color .2s; flex-shrink: 0; }
+
+// ── Header negocio seleccionado ────────────────────
+.negocio-header {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  background: white; border: 1.5px solid $border; border-radius: 14px; padding: 20px 24px; margin-bottom: 28px;
+}
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: 1.5px solid $border; color: $gris; padding: 8px 14px;
+  border-radius: 8px; font-size: .85rem; cursor: pointer; transition: all .18s; font-family: $font;
+  svg { width: 16px; height: 16px; }
+  &:hover { border-color: $verde; color: $verde; }
+}
+.negocio-header-info {
+  flex: 1; display: flex; align-items: center; gap: 14px;
+  h2 { font-size: 1.1rem; font-weight: 800; color: $negro; margin-bottom: 2px; }
+  span { font-size: .8rem; color: $gris; }
+}
+.negocio-header-icon {
+  width: 44px; height: 44px; background: $pale; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  svg { width: 22px; height: 22px; stroke: $verde; }
+}
+
+// ── Grid productos ─────────────────────────────────
+.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.producto-card {
+  background: white; border: 1.5px solid $border; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 16px;
+  transition: box-shadow .2s;
+  &:hover { box-shadow: 0 4px 20px rgba(0,0,0,.07); }
+}
+.producto-info {
+  display: flex; flex-direction: column; gap: 4px;
+  strong { font-size: .97rem; font-weight: 800; color: $negro; }
+  .producto-desc { font-size: .8rem; color: $gris; line-height: 1.4; }
+  .producto-cat { font-size: .7rem; font-weight: 700; color: $verde; text-transform: uppercase; letter-spacing: .04em; }
+  .producto-precio { font-size: 1.1rem; font-weight: 900; color: $negro; margin-top: 4px; }
+}
+.producto-acciones { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.qty-ctrl {
+  display: flex; align-items: center; gap: 10px;
+  button { width:32px; height:32px; border-radius:8px; border:1.5px solid $border; background:white; font-size:1.1rem; font-weight:700; cursor:pointer; transition:all .18s; color:$negro; &:hover { border-color:$verde; color:$verde; } }
+  span { font-size:.95rem; font-weight:700; color:$negro; min-width:20px; text-align:center; }
+}
+.btn-agregar {
+  background: $verde; color: white; border: none; padding: 8px 20px; border-radius: 8px;
+  font-size: .85rem; font-weight: 700; cursor: pointer; transition: all .18s; font-family: $font;
+  &:hover:not(:disabled) { background: $verde2; }
+  &:disabled { opacity: .4; cursor: not-allowed; }
+}
+
+// ── Estados ────────────────────────────────────────
+.loading-state { display:flex; flex-direction:column; align-items:center; gap:12px; padding:60px 0; color:$gris; font-size:.9rem; }
+.spinner { width:32px; height:32px; border:3px solid $border; border-top-color:$verde; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.empty-state {
+  grid-column: 1/-1; display:flex; flex-direction:column; align-items:center; gap:12px;
+  padding:60px 0; color:$gris;
+  svg { width:40px; height:40px; stroke:$gris; opacity:.4; }
+  p { font-size:.95rem; }
+}
+
+@media (max-width:600px) {
+  .page-hero { padding:40px 20px; }
+  .content { padding:24px 16px; }
+  .page-hero-inner h1 { font-size:1.6rem; }
+  .negocios-grid, .productos-grid { grid-template-columns:1fr; }
+}

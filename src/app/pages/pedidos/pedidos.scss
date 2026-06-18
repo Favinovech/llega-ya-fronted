@@ -1,0 +1,554 @@
+@use "sass:color";
+
+$verde:      #6fb07f;
+$verde-dark: #5a9a6a;
+$verde-soft: #f5faf6;
+$bg:         #f7f7f7;
+$card:       #ffffff;
+$border:     #e8e8e8;
+$txt:        #1a1a1a;
+$txt-light:  #888;
+$danger:     #e25c5c;
+$warn:       #e6a23c;
+$info:       #4a90d9;
+
+.pedidos-page {
+  background: $bg;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: $txt;
+}
+
+// HERO
+.pedidos-hero {
+  background: $verde;
+  color: #fff;
+  padding: 36px 40px 56px;
+  .hero-inner { max-width: 1200px; margin: 0 auto; }
+  .hero-label {
+    font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+    opacity: .85; display: block; margin-bottom: 8px;
+  }
+  h1 { font-size: 2rem; font-weight: 800; margin: 0 0 8px; }
+  p  { font-size: .95rem; opacity: .9; margin: 0; }
+}
+
+.pedidos-layout {
+  max-width: 1200px;
+  margin: -32px auto 0;
+  padding: 0 24px 64px;
+}
+
+// FILTROS
+.filtros-pedidos {
+  background: $card;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+
+  button {
+    border: 1px solid $border;
+    background: white;
+    border-radius: 18px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .15s;
+    color: $txt-light;
+    font-weight: 500;
+    &:hover { border-color: $verde; color: $verde; }
+    &.active {
+      background: $verde;
+      color: white;
+      border-color: $verde;
+    }
+  }
+  .auto-refresh {
+    margin-left: auto;
+    font-size: 11px;
+    color: $txt-light;
+    background: $verde-soft;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+}
+
+// CARDS
+.pedidos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.pedido-card {
+  background: $card;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+  border-left: 4px solid $verde;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+  }
+  &.cancelado {
+    border-left-color: $danger;
+    opacity: .75;
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  strong { font-size: 15px; color: $txt; display: block; }
+  .card-fecha { font-size: 11px; color: $txt-light; }
+}
+
+.badge-estado {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+  background: $verde-soft;
+  color: $verde-dark;
+
+  &[data-estado="pendiente"]  { background: rgba(230,162,60,.15);  color: $warn; }
+  &[data-estado="confirmado"] { background: rgba(74,144,217,.15);  color: $info; }
+  &[data-estado="en_camino"]  { background: rgba(111,176,127,.2); color: $verde-dark; }
+  &[data-estado="entregado"]  { background: rgba(111,176,127,.25); color: $verde-dark; }
+  &[data-estado="cancelado"]  { background: rgba(226,92,92,.15);  color: $danger; }
+}
+
+.card-negocio {
+  background: $verde-soft;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  strong { color: $txt; font-size: 14px; }
+  span   { color: $txt-light; font-size: 12px; margin-top: 2px; }
+}
+
+// PROGRESO (HU08 criterio 1)
+.progreso-wrap {
+  margin: 18px 0;
+}
+
+.progreso-bar {
+  height: 4px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  position: relative;
+  margin: 0 18px;
+  margin-bottom: -8px;
+  z-index: 0;
+}
+.progreso-fill {
+  background: $verde;
+  height: 100%;
+  border-radius: 4px;
+  transition: width .5s ease;
+}
+
+.progreso-pasos {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.paso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+
+  .paso-icono {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    color: $txt-light;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all .3s;
+    border: 2px solid white;
+  }
+  span {
+    font-size: 10px;
+    color: $txt-light;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  &.activo .paso-icono {
+    background: $verde;
+    color: white;
+  }
+  &.activo span { color: $verde-dark; font-weight: 600; }
+
+  &.actual .paso-icono {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px rgba(111,176,127,.25);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(111,176,127,.25); }
+  50%      { box-shadow: 0 0 0 8px rgba(111,176,127,.1); }
+}
+
+.cancel-msg {
+  background: rgba(226,92,92,.08);
+  color: $danger;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 14px 0;
+}
+
+.card-direccion {
+  font-size: 12px;
+  color: $txt-light;
+  border-top: 1px solid $border;
+  padding-top: 10px;
+  margin-top: 14px;
+}
+
+// EMPTY / LOADING
+.empty-box {
+  background: $card;
+  border-radius: 14px;
+  padding: 60px 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  color: $txt-light;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  h3 { color: $txt; margin: 0; }
+  p  { margin: 0; font-size: 14px; }
+}
+.empty-icon { font-size: 48px; }
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid #e8f3eb;
+  border-top-color: $verde;
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// MODAL
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn .2s ease;
+}
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.modal-pedido {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+
+  header {
+    padding: 20px 24px;
+    border-bottom: 1px solid $border;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h3 { margin: 0; color: $txt; font-size: 18px; }
+    small { color: $txt-light; font-size: 13px; }
+  }
+  .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: $txt-light;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    &:hover { background: #f0f0f0; color: $txt; }
+  }
+  .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  footer {
+    padding: 16px 24px;
+    border-top: 1px solid $border;
+    background: #fafafa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+}
+
+// Estado actual en modal
+.estado-actual {
+  background: $verde-soft;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+
+  &[data-estado="pendiente"]  { background: rgba(230,162,60,.12); }
+  &[data-estado="confirmado"] { background: rgba(74,144,217,.12); }
+  &[data-estado="en_camino"]  { background: rgba(111,176,127,.15); }
+  &[data-estado="entregado"]  { background: rgba(111,176,127,.2); }
+  &[data-estado="cancelado"]  { background: rgba(226,92,92,.12); }
+
+  .estado-actual-icono {
+    font-size: 32px;
+    width: 56px;
+    height: 56px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  strong { display: block; font-size: 17px; color: $txt; }
+  span   { display: block; font-size: 12px; color: $txt-light; }
+}
+
+.seccion {
+  margin-bottom: 24px;
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: $txt;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: .7;
+  }
+}
+
+// Mapa
+.mapa {
+  width: 100%;
+  height: 250px;
+  border-radius: 12px;
+  border: 1px solid $border;
+  background: #f0f0f0;
+  z-index: 1;
+}
+.mapa-direccion {
+  font-size: 13px;
+  color: $txt-light;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+// Lista productos modal
+.lista-productos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid $border;
+    font-size: 14px;
+    color: $txt;
+    &:last-child { border-bottom: none; }
+  }
+}
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0 0;
+  border-top: 2px solid $border;
+  margin-top: 8px;
+  font-size: 16px;
+  color: $verde-dark;
+}
+
+// Timeline historial
+.timeline-pedido {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  li {
+    display: flex;
+    gap: 14px;
+    padding: 10px 0;
+    position: relative;
+  }
+  .t-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: $verde;
+    flex-shrink: 0;
+    margin-top: 4px;
+    box-shadow: 0 0 0 4px $verde-soft;
+  }
+  .t-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    strong { color: $txt; font-size: 14px; }
+    .t-fecha { color: $txt-light; font-size: 11px; }
+    .t-meta  { color: $txt-light; font-size: 12px; }
+  }
+}
+
+// Botones
+.btn-primary {
+  background: $verde;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  &:hover { background: $verde-dark; }
+}
+.btn-danger {
+  background: white;
+  color: $danger;
+  border: 1px solid $danger;
+  border-radius: 20px;
+  padding: 10px 22px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  &:hover { background: $danger; color: white; }
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .pedidos-grid { grid-template-columns: 1fr; }
+  .paso span { font-size: 9px; }
+}
+
+// Para Leaflet
+:host ::ng-deep .mapa-emoji {
+  background: transparent !important;
+  border: none !important;
+  font-size: 28px;
+  text-align: center;
+}
+:host ::ng-deep .leaflet-popup-content {
+  font-family: 'Segoe UI', sans-serif !important;
+  font-size: 13px;
+}
+
+.modal-cancelacion {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 440px;
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h3 { margin: 0; color: #e53e3e; }
+  }
+
+  .modal-body {
+    p { color: #555; margin-bottom: 16px; }
+  }
+
+  .campo-motivo {
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #333;
+
+      .opcional {
+        font-weight: normal;
+        color: gray;
+        font-size: 12px;
+      }
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      outline: none;
+      resize: none;
+      font-family: inherit;
+      font-size: 14px;
+      box-sizing: border-box;
+
+      &:focus { border-color: #6fb07f; }
+    }
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+
+    .btn-outline {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      &:hover { background: #f5f5f5; }
+    }
+
+    .btn-danger {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: none;
+      background: #e53e3e;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      &:hover { background: #c53030; }
+    }
+  }
+}

@@ -1,0 +1,138 @@
+<!-- ── NAVBAR PÚBLICO ──────────────────────────────── -->
+<header class="pub-nav">
+  <div class="pub-nav-inner">
+    <a class="pub-logo" routerLink="/">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="16" fill="#2e7d32"/>
+        <path d="M8 20 C10 14, 14 12, 16 12 C18 12, 22 14, 24 20" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="10" cy="21" r="2.5" fill="white"/>
+        <circle cx="22" cy="21" r="2.5" fill="white"/>
+        <path d="M13 12 L16 7 L19 12" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span>LlegaYa</span>
+    </a>
+    <div class="pub-nav-links">
+      <a routerLink="/login">Iniciar sesión</a>
+      <a routerLink="/register" class="btn-registro">Crear cuenta</a>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="hero-pill">Delivery en Lima, Perú</span>
+      <h1>Todo lo que necesitas,<br><span>en minutos</span></h1>
+      <p>Restaurantes, farmacias y bodegas de tu barrio, en un solo lugar. Pedido listo sin salir de casa.</p>
+      <div class="hero-ctas">
+        <a routerLink="/register" class="cta-primary">Empezar ahora</a>
+        <a routerLink="/login" class="cta-secondary">Ya tengo cuenta</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="visual-card card-a">
+        <div class="vc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>
+          </svg>
+        </div>
+        <div>
+          <strong>Pollería El Tizón</strong>
+          <span>Restaurante · 25 min</span>
+        </div>
+      </div>
+
+      <div class="visual-main">
+        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="100" fill="#e8f5e9"/>
+          <rect x="55" y="70" width="90" height="75" rx="8" fill="white" stroke="#c8e6c9" stroke-width="1.5"/>
+          <rect x="68" y="85" width="30" height="4" rx="2" fill="#2e7d32"/>
+          <rect x="68" y="94" width="50" height="3" rx="1.5" fill="#c8e6c9"/>
+          <rect x="68" y="102" width="40" height="3" rx="1.5" fill="#c8e6c9"/>
+          <rect x="68" y="118" width="64" height="16" rx="8" fill="#2e7d32"/>
+          <rect x="82" y="124" width="36" height="4" rx="2" fill="white"/>
+          <circle cx="140" cy="60" r="18" fill="#2e7d32"/>
+          <path d="M133 60 L138 65 L148 55" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="visual-card card-b">
+        <div class="vc-dot"></div>
+        <div>
+          <strong>Pedido confirmado</strong>
+          <span>Llega en 22 min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ESTADÍSTICAS ───────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item" *ngFor="let s of estadisticas">
+      <strong>{{ s.valor }}</strong>
+      <span>{{ s.label }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── CATEGORÍAS ────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label">Lo que encontrarás</div>
+    <h2 class="section-title">Un marketplace completo<br>para tu barrio</h2>
+
+    <div class="cat-grid">
+      <div class="cat-card" *ngFor="let c of categorias">
+        <div class="cat-card-icon" [innerHTML]="c.svg"></div>
+        <strong>{{ c.nombre }}</strong>
+        <p>{{ c.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CÓMO FUNCIONA ──────────────────────────────── -->
+<section class="section section-dark">
+  <div class="section-inner">
+    <div class="section-label light">El proceso</div>
+    <h2 class="section-title light">Cuatro pasos,<br>un solo clic</h2>
+
+    <div class="pasos-grid">
+      <div class="paso" *ngFor="let p of pasos">
+        <div class="paso-num">{{ p.num }}</div>
+        <div class="paso-icon" [innerHTML]="p.svg"></div>
+        <strong>{{ p.titulo }}</strong>
+        <p>{{ p.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA FINAL ──────────────────────────────────── -->
+<section class="section-cta">
+  <div class="cta-inner">
+    <h2>¿Listo para pedir?</h2>
+    <p>Únete a miles de vecinos que ya usan LlegaYa cada día.</p>
+    <div class="cta-btns">
+      <a routerLink="/register" class="cta-primary large">Crear cuenta gratis</a>
+      <a routerLink="/login" class="cta-ghost large">Iniciar sesión</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────── -->
+<footer class="pub-footer">
+  <div class="footer-inner">
+    <span class="footer-brand">LlegaYa Perú</span>
+    <span class="footer-copy">© {{ year }} Todos los derechos reservados.</span>
+    <div class="footer-links">
+      <a href="#">Términos</a>
+      <a href="#">Privacidad</a>
+      <a href="#">Ayuda</a>
+    </div>
+  </div>
+</footer>

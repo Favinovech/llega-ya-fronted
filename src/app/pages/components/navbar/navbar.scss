@@ -1,0 +1,146 @@
+$verde:  #2e7d32;
+$negro:  #1a1a1a;
+$altura: 64px;
+
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  height: $altura;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  gap: 16px;
+}
+
+// ── Logo ──────────────────────────────────────────────────
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+  user-select: none;
+
+  .logo-icono { font-size: 1.5rem; }
+
+  .logo-texto {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: $verde;
+    letter-spacing: -0.5px;
+  }
+}
+
+// ── Links ─────────────────────────────────────────────────
+.navbar-links {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+
+  a {
+    text-decoration: none;
+    color: #555;
+    font-size: .88rem;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: all .18s;
+    white-space: nowrap;
+
+    &:hover  { background: #f1f8f1; color: $verde; }
+    &.active { color: $verde; font-weight: 700; background: #e8f5e9; }
+  }
+}
+
+// ── Right section ─────────────────────────────────────────
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+// Botón icono genérico
+.icon-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  color: #555;
+  transition: all .18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg { width: 20px; height: 20px; }
+  &:hover { background: #f1f8f1; color: $verde; }
+}
+
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #e53935;
+  color: #fff;
+  font-size: .58rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 1.5px solid white;
+}
+
+// Avatar
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $verde;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+  &:hover { background: #1b5e20; transform: scale(1.06); }
+}
+
+// Badge admin
+.badge-admin {
+  background: $negro;
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: none;
+  transition: background .2s;
+  &:hover { background: $verde; }
+}
+
+// Botón cerrar sesión
+.btn-logout {
+  background: none;
+  border: 1px solid #ddd;
+  color: #777;
+  font-size: .82rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .2s;
+  &:hover { border-color: #e53935; color: #e53935; background: #fff5f5; }
+}

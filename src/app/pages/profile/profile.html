@@ -1,0 +1,174 @@
+<app-navbar></app-navbar>
+
+<main class="profile-page">
+
+  <div class="profile-hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Mi Cuenta</p>
+      <h1>Hola, {{ usuario?.nombre }}</h1>
+      <p>Gestiona tus datos, direcciones y conviértete en comercio en LlegaYa.</p>
+    </div>
+  </div>
+
+  <div class="profile-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="user-card">
+        <div class="avatar-big" [class.tiene-foto]="fotoUrl">
+          <img *ngIf="fotoUrl" [src]="fotoUrl" alt="Foto de perfil"/>
+          <span *ngIf="!fotoUrl">{{ iniciales }}</span>
+          <label class="foto-overlay" title="Cambiar foto">
+            <svg *ngIf="!subiendoFoto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <svg *ngIf="subiendoFoto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <input type="file" accept="image/*" (change)="seleccionarFoto($event)" style="display:none"/>
+          </label>
+        </div>
+        <div class="user-info">
+          <strong>{{ usuario?.nombre }} {{ usuario?.apellido }}</strong>
+          <span class="email">{{ usuario?.email }}</span>
+          <span class="rol-badge">{{ rolLabel }}</span>
+        </div>
+        <button class="btn-outline" (click)="activar('datos'); iniciarEdicion()">Editar Perfil</button>
+      </div>
+
+      <nav class="side-nav">
+        <button [class.activo]="seccionActiva==='datos'" (click)="activar('datos')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Datos Personales
+        </button>
+        <button [class.activo]="seccionActiva==='direcciones'" (click)="activar('direcciones')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Direcciones
+        </button>
+        <button [class.activo]="seccionActiva==='pagos'" (click)="activar('pagos')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Pagos
+        </button>
+        <button [class.activo]="seccionActiva==='pedidos'" (click)="activar('pedidos')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Pedidos
+        </button>
+        <button [class.activo]="seccionActiva==='comercio'" (click)="activar('comercio')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          Mi comercio
+        </button>
+        <button [class.activo]="seccionActiva==='config'" (click)="activar('config')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Configuración
+        </button>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO -->
+    <section class="profile-content">
+
+      <div class="banner-comercio">
+        <div class="banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="26" height="26"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div class="banner-text">
+          <strong>¿Tienes un comercio?</strong>
+          <p>Vende en LlegaYa con tu RUC. Configura horarios, catálogo y empieza a recibir pedidos en minutos.</p>
+        </div>
+        <button type="button" class="btn-dark" routerLink="/comercio/registro">Registrar comercio</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-num">12</span>
+          <span class="stat-label">PEDIDOS ESTE MES</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">S/ 486</span>
+          <span class="stat-label">GASTOS DEL MES</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">4.9</span>
+          <span class="stat-label">TU CALIFICACIÓN</span>
+        </div>
+      </div>
+
+      <!-- DATOS PERSONALES -->
+      <div class="card" *ngIf="seccionActiva === 'datos'">
+        <div class="card-header">
+          <h3>Datos Personales</h3>
+          <button class="btn-link" *ngIf="!editando" (click)="iniciarEdicion()">Editar</button>
+        </div>
+
+        <div class="datos-grid" *ngIf="!editando">
+          <div class="dato"><label>NOMBRE</label><span>{{ usuario?.nombre }}</span></div>
+          <div class="dato"><label>APELLIDO</label><span>{{ usuario?.apellido }}</span></div>
+          <div class="dato"><label>CORREO</label><span>{{ usuario?.email }}</span></div>
+          <div class="dato"><label>CELULAR</label><span>{{ usuario?.telefono || '—' }}</span></div>
+          <div class="dato"><label>ROL</label><span>{{ rolLabel }}</span></div>
+        </div>
+
+        <form [formGroup]="editForm" (ngSubmit)="guardarPerfil()" *ngIf="editando">
+          <div class="datos-grid">
+            <div class="campo"><label>NOMBRE *</label><input type="text" formControlName="nombre" placeholder="Tu nombre"/></div>
+            <div class="campo"><label>APELLIDO *</label><input type="text" formControlName="apellido" placeholder="Tu apellido"/></div>
+            <div class="campo"><label>CORREO</label><input type="email" [value]="usuario?.email" disabled/></div>
+            <div class="campo"><label>CELULAR</label><input type="tel" formControlName="telefono" placeholder="987 654 321"/></div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-outline" (click)="cancelarEdicion()">Cancelar</button>
+            <button type="submit" class="btn-green" [disabled]="guardando || editForm.invalid">{{ guardando ? 'Guardando...' : 'Guardar cambios' }}</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PEDIDOS RECIENTES -->
+      <div class="card" *ngIf="seccionActiva === 'pedidos'">
+        <div class="card-header">
+          <h3>Pedidos Recientes</h3>
+          <button class="btn-link">Ver todos</button>
+        </div>
+        <table class="tabla-pedidos">
+          <thead><tr><th>PEDIDO</th><th>COMERCIO</th><th>TOTAL</th><th>ESTADO</th></tr></thead>
+          <tbody>
+            <tr><td>#LY-2041</td><td>Botica San Martín</td><td>S/ 38.50</td><td><span class="estado entregado">Entregado</span></td></tr>
+            <tr><td>#LY-2039</td><td>Mercado Surquillo</td><td>S/ 72.10</td><td><span class="estado entregado">Entregado</span></td></tr>
+            <tr><td>#LY-2035</td><td>Don Pollo Lince</td><td>S/ 26.00</td><td><span class="estado entregado">Entregado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- OTRAS SECCIONES -->
+      <div class="card placeholder-card"
+           *ngIf="seccionActiva === 'direcciones' || seccionActiva === 'pagos' || seccionActiva === 'comercio' || seccionActiva === 'config'">
+        <div class="card-header"><h3>{{ seccionActiva | titlecase }}</h3></div>
+        <p class="placeholder-text">Esta sección estará disponible próximamente.</p>
+      </div>
+
+      <!-- ACCESOS RÁPIDOS -->
+      <div class="quick-links">
+        <div class="ql-item" (click)="activar('direcciones')">
+          <div class="ql-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><strong>Direcciones</strong><small>Av. Arequipa 1234, Lince &nbsp;+2 más</small></div>
+          <svg class="ql-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div class="ql-item" (click)="activar('pagos')">
+          <div class="ql-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <div><strong>Métodos de pago</strong><small>Visa ···4321 &nbsp;Yape</small></div>
+          <svg class="ql-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div class="ql-item" (click)="activar('pedidos')">
+          <div class="ql-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+          <div><strong>Historial de pedidos</strong><small>12 pedidos este mes</small></div>
+          <svg class="ql-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div class="ql-item" (click)="activar('config')">
+          <div class="ql-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+          <div><strong>Configuración</strong><small>Notificaciones, idioma, privacidad</small></div>
+          <svg class="ql-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </div>
+
+      <button class="btn-logout" (click)="logout()">Cerrar Sesión</button>
+
+    </section>
+  </div>
+</main>
+
+<app-footer></app-footer>

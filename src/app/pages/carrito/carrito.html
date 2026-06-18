@@ -1,0 +1,130 @@
+<app-navbar></app-navbar>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div>
+        <p class="eyebrow">Mi Carrito</p>
+        <h1>Revisa tu pedido</h1>
+        <p class="hero-sub">{{ totalItems }} producto(s) de {{ negocioKeys.length }} comercio(s)</p>
+      </div>
+      <button class="btn-outline-white" (click)="irAComercio()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Agregar más
+      </button>
+    </div>
+  </div>
+
+  <div class="page-body">
+
+    <!-- PEDIDO CONFIRMADO -->
+    <div class="state-card" *ngIf="pedidoOk">
+      <div class="state-icon success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2>¡Pedido confirmado!</h2>
+      <p>Tus pedidos fueron registrados correctamente. Puedes seguir el estado desde la sección de pedidos.</p>
+      <button class="btn-primary" (click)="irAPedidos()">Ver mis pedidos</button>
+    </div>
+
+    <!-- CARRITO VACÍO -->
+    <div class="state-card" *ngIf="!pedidoOk && items.length === 0">
+      <div class="state-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+      </div>
+      <h2>Tu carrito está vacío</h2>
+      <p>Explora los comercios y agrega los productos que necesitas.</p>
+      <button class="btn-primary" (click)="irAComercio()">Ver comercios</button>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="carrito-layout" *ngIf="!pedidoOk && items.length > 0">
+
+      <!-- Items -->
+      <div class="carrito-items">
+        <div class="negocio-grupo" *ngFor="let key of negocioKeys">
+          <div class="grupo-header">
+            <div class="grupo-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+            </div>
+            <strong>{{ nombreNegocio(key) }}</strong>
+            <span class="subtotal">S/ {{ subtotalNegocio(porNegocio[key]).toFixed(2) }}</span>
+          </div>
+
+          <div class="item-row" *ngFor="let item of porNegocio[key]">
+            <div class="item-info">
+              <strong>{{ item.nombre }}</strong>
+              <span>S/ {{ item.precio }} c/u</span>
+            </div>
+            <div class="item-acciones">
+              <input type="number" min="1" max="99" [value]="item.cantidad" (change)="actualizar(item.producto_id, $event)"/>
+              <span class="item-total">S/ {{ (item.precio * item.cantidad).toFixed(2) }}</span>
+              <button class="btn-delete" (click)="eliminar(item.producto_id)" title="Eliminar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-vaciar" (click)="limpiarCarrito()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          </svg>
+          Vaciar carrito
+        </button>
+      </div>
+
+      <!-- Resumen -->
+      <div class="carrito-resumen">
+        <div class="resumen-card">
+          <h3>Resumen del pedido</h3>
+
+          <div class="resumen-linea" *ngFor="let key of negocioKeys">
+            <span>{{ nombreNegocio(key) }}</span>
+            <span>S/ {{ subtotalNegocio(porNegocio[key]).toFixed(2) }}</span>
+          </div>
+          <div class="resumen-linea muted">
+            <span>Tarifa de envío</span>
+            <span>Por calcular</span>
+          </div>
+          <div class="resumen-total">
+            <span>Total</span>
+            <strong>S/ {{ totalGeneral.toFixed(2) }}</strong>
+          </div>
+
+          <div class="campo-direccion">
+            <label>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              Dirección de entrega *
+            </label>
+            <input type="text" [(ngModel)]="direccion" placeholder="Ej: Av. Arequipa 1234, Lince"/>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+          <button class="btn-confirmar" (click)="confirmarPedido()" [disabled]="confirmando || !direccion.trim()">
+            {{ confirmando ? 'Confirmando...' : 'Confirmar pedido' }}
+          </button>
+
+          <p class="resumen-nota">Se crearán {{ negocioKeys.length }} pedido(s) separado(s), uno por cada comercio.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

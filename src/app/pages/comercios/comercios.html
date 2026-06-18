@@ -1,0 +1,133 @@
+<app-navbar></app-navbar>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div>
+        <p class="eyebrow">Comercios</p>
+        <h1>¿Qué necesitas hoy?</h1>
+        <p class="hero-sub">Elige un comercio y agrega productos a tu carrito</p>
+      </div>
+      <button class="btn-carrito" (click)="irAlCarrito()" *ngIf="totalItemsCarrito > 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        Ver carrito
+        <span class="badge">{{ totalItemsCarrito }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LISTA DE NEGOCIOS -->
+  <div class="content" *ngIf="!negocioActivo">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" placeholder="Buscar comercios..." (input)="onFiltroTexto($event)"/>
+      </div>
+      <div class="cat-pills">
+        <button *ngFor="let c of categorias" class="pill" [class.active]="filtroCategoria === c.valor" (click)="onFiltroCategoria(c.valor)">
+          {{ c.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="cargando">
+      <div class="spinner"></div>
+      <span>Cargando comercios...</span>
+    </div>
+
+    <div class="negocios-grid" *ngIf="!cargando">
+      <div class="negocio-card" *ngFor="let n of negociosFiltrados" (click)="seleccionarNegocio(n)">
+        <div class="negocio-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+        </div>
+        <div class="negocio-info">
+          <strong>{{ n.nombre }}</strong>
+          <span class="negocio-cat">{{ n.categoria }}</span>
+          <span class="negocio-dir">{{ n.direccion }}</span>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </div>
+
+      <div class="empty-state" *ngIf="negociosFiltrados.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <p>No se encontraron comercios</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS DEL NEGOCIO -->
+  <div class="content" *ngIf="negocioActivo">
+    <div class="negocio-header">
+      <button class="btn-back" (click)="volverALista()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Volver
+      </button>
+      <div class="negocio-header-info">
+        <div class="negocio-header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+        </div>
+        <div>
+          <h2>{{ negocioActivo.nombre }}</h2>
+          <span>{{ negocioActivo.direccion }}</span>
+        </div>
+      </div>
+      <button class="btn-carrito" (click)="irAlCarrito()" *ngIf="totalItemsCarrito > 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        Ver carrito <span class="badge">{{ totalItemsCarrito }}</span>
+      </button>
+    </div>
+
+    <div class="loading-state" *ngIf="cargandoProds">
+      <div class="spinner"></div>
+      <span>Cargando productos...</span>
+    </div>
+
+    <div class="productos-grid" *ngIf="!cargandoProds">
+      <div class="producto-card" *ngFor="let p of productos">
+        <div class="producto-info">
+          <strong>{{ p.nombre }}</strong>
+          <span class="producto-desc">{{ p.descripcion }}</span>
+          <span class="producto-cat">{{ p.categoria }}</span>
+          <span class="producto-precio">S/ {{ p.precio }}</span>
+        </div>
+        <div class="producto-acciones">
+          <div class="qty-ctrl">
+            <button (click)="decrementar(p.id)">−</button>
+            <span>{{ cantidadesSeleccionadas[p.id] || 0 }}</span>
+            <button (click)="incrementar(p.id)">+</button>
+          </div>
+          <button class="btn-agregar" [disabled]="(cantidadesSeleccionadas[p.id] || 0) === 0" (click)="agregarAlCarrito(p)">
+            Agregar
+          </button>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="productos.length === 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <p>Este comercio no tiene productos disponibles</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<app-footer></app-footer>

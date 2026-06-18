@@ -1,0 +1,76 @@
+$verde: #2e7d32; $negro: #111827; $font: 'Inter','Segoe UI',system-ui,sans-serif;
+
+.footer {
+  background: $negro;
+  font-family: $font;
+  margin-top: 0;
+
+  &-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 32px 40px;
+    display: flex;
+    gap: 64px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  &-brand {
+    flex: 1;
+    min-width: 200px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      span { font-size: 1.2rem; font-weight: 900; color: white; }
+      svg { width: 28px; height: 28px; }
+    }
+
+    p { font-size: .85rem; line-height: 1.7; color: #6b7280; max-width: 240px; }
+  }
+
+  &-links {
+    display: flex;
+    gap: 56px;
+    flex-wrap: wrap;
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      h4 {
+        color: white;
+        font-size: .78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        margin-bottom: 4px;
+      }
+
+      a {
+        text-decoration: none;
+        color: #6b7280;
+        font-size: .85rem;
+        transition: color .18s;
+        &:hover { color: #4ade80; }
+      }
+    }
+  }
+
+  &-bottom {
+    border-top: 1px solid #1f2937;
+    padding: 20px 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: .78rem;
+    color: #4b5563;
+  }
+}

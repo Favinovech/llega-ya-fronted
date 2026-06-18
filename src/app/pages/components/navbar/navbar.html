@@ -1,0 +1,45 @@
+<nav class="navbar">
+
+  <a class="navbar-logo" routerLink="/home">
+    <svg class="logo-icon" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="14" fill="#2e7d32"/>
+      <path d="M7 17 C9 12, 12 10, 14 10 C16 10, 19 12, 21 17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <circle cx="9" cy="18" r="2" fill="white"/>
+      <circle cx="19" cy="18" r="2" fill="white"/>
+    </svg>
+    <span>LlegaYa</span>
+  </a>
+
+  <nav class="navbar-links">
+    <a routerLink="/home"      routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Inicio</a>
+    <a routerLink="/comercios" routerLinkActive="active">Comercios</a>
+    <a routerLink="/pedidos"   routerLinkActive="active">Mis pedidos</a>
+    <a *ngIf="tieneNegocio" routerLink="/mi-comercio" routerLinkActive="active">Mi comercio</a>
+    <a *ngIf="tieneNegocio" routerLink="/catalogo"    routerLinkActive="active">Catálogo</a>
+  </nav>
+
+  <div class="navbar-right">
+
+    <!-- Carrito -->
+    <button class="icon-btn" routerLink="/carrito" title="Carrito">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      <span class="badge" *ngIf="totalCarrito > 0">{{ totalCarrito }}</span>
+    </button>
+
+    <!-- Avatar -->
+    <button class="avatar" (click)="irPerfil()" [title]="usuario?.nombre ?? 'Mi perfil'">
+      {{ usuario?.nombre?.charAt(0)?.toUpperCase() ?? 'U' }}
+    </button>
+
+    <!-- Admin -->
+    <button *ngIf="rol === 'admin'" class="badge-admin" (click)="irAdmin()">Admin</button>
+
+    <!-- Salir -->
+    <button class="btn-logout" (click)="logout()">Salir</button>
+
+  </div>
+
+</nav>

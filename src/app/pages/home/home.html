@@ -1,0 +1,121 @@
+<app-navbar></app-navbar>
+
+<main class="home-main">
+
+  <!-- ── HERO ──────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <p class="hero-greeting">Hola, {{ nombreUsuario }}</p>
+        <h1>¿Qué necesitas hoy?</h1>
+        <p class="hero-sub">Encuentra restaurantes, farmacias y bodegas cerca de ti.</p>
+      </div>
+
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          [(ngModel)]="terminoBusqueda"
+          (keydown)="onBuscarKeydown($event)"
+          placeholder="Busca pollo a la brasa, paracetamol, gaseosas..."
+        />
+        <button class="btn-buscar" (click)="buscar()">Buscar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ESTADÍSTICAS ──────────────────────────── -->
+  <div class="stats-row">
+    <div class="stat-chip" *ngFor="let s of estadisticas">
+      <strong>{{ s.valor }}</strong>
+      <span>{{ s.etiqueta }}</span>
+    </div>
+  </div>
+
+  <!-- ── CATEGORÍAS ────────────────────────────── -->
+  <section class="content-section">
+    <div class="content-inner">
+      <div class="section-head">
+        <h2>Explora por categoría</h2>
+        <button class="link-btn" (click)="irAComercios()">Ver todos los comercios</button>
+      </div>
+      <div class="cat-grid">
+        <button class="cat-card" *ngFor="let c of categorias" (click)="irAComercios(c.valor)">
+          <div class="cat-icon" [innerHTML]="c.svg"></div>
+          <div class="cat-info">
+            <strong>{{ c.nombre }}</strong>
+            <span>{{ c.descripcion }}</span>
+          </div>
+          <svg class="cat-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NEGOCIOS DESTACADOS ───────────────────── -->
+  <section class="content-section alt">
+    <div class="content-inner">
+      <div class="section-head">
+        <h2>Destacados cerca de ti</h2>
+        <button class="link-btn" (click)="irAComercios()">Ver todos</button>
+      </div>
+      <div class="negocios-grid">
+        <div class="negocio-card" *ngFor="let n of negociosDestacados" (click)="irAComercios()">
+          <div class="negocio-banner" [style.background]="n.colorFondo">
+            <div class="negocio-banner-icon" [innerHTML]="n.svg"></div>
+            <span class="negocio-tag" *ngIf="n.etiqueta">{{ n.etiqueta }}</span>
+          </div>
+          <div class="negocio-body">
+            <span class="negocio-cat">{{ n.categoria }}</span>
+            <strong class="negocio-nombre">{{ n.nombre }}</strong>
+            <p class="negocio-desc">{{ n.descripcion }}</p>
+            <div class="negocio-meta">
+              <span>{{ n.tiempoEntrega }}</span>
+              <span class="negocio-rating">{{ n.calificacion }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CÓMO FUNCIONA ─────────────────────────── -->
+  <section class="content-section">
+    <div class="content-inner">
+      <div class="section-head centered">
+        <h2>¿Cómo funciona?</h2>
+      </div>
+      <div class="pasos-grid">
+        <div class="paso-card" *ngFor="let p of pasosServicio">
+          <div class="paso-num">{{ p.numero }}</div>
+          <div class="paso-icon" [innerHTML]="p.svg"></div>
+          <strong>{{ p.titulo }}</strong>
+          <p>{{ p.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA COMERCIO ───────────────────────────── -->
+  <section class="cta-section">
+    <div class="cta-inner">
+      <div class="cta-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+      </div>
+      <div class="cta-text">
+        <h2>¿Tienes un negocio?</h2>
+        <p>Regístralo en LlegaYa y comienza a recibir pedidos hoy mismo. Sin comisiones ocultas.</p>
+        <button class="btn-cta" routerLink="/comercio/registro">Registrar mi comercio</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<app-footer></app-footer>

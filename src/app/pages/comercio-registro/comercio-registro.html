@@ -1,0 +1,291 @@
+<app-navbar></app-navbar>
+
+<div class="wizard-page">
+
+  <!-- ══ HEADER ══════════════════════════════════════ -->
+  <div class="wizard-header">
+    <div class="wizard-header-inner">
+      <button class="btn-back" routerLink="/profile">← Volver</button>
+      <div>
+        <p class="wizard-eyebrow">REGISTRO DE COMERCIO</p>
+        <h1>Empieza a vender en LlegaYa</h1>
+        <p class="wizard-sub">Configura tu negocio en minutos y llega a más clientes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONTENIDO ════════════════════════════════════ -->
+  <div class="wizard-body">
+
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="stepper-track">
+        <div class="stepper-fill" [style.width.%]="porcentaje"></div>
+      </div>
+
+      <div class="stepper-steps">
+        <!-- Paso 1 -->
+        <div class="step" [class.activo]="pasoActual === 1"
+             [class.completado]="pasoActual > 1" (click)="irAPaso(1)">
+          <div class="step-circle">
+            <span *ngIf="pasoActual <= 1">1</span>
+            <span *ngIf="pasoActual > 1">✓</span>
+          </div>
+          <div class="step-label">
+            <small>Paso 1</small>
+            <strong>Datos legales</strong>
+          </div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="step" [class.activo]="pasoActual === 2"
+             [class.completado]="pasoActual > 2" (click)="irAPaso(2)">
+          <div class="step-circle">
+            <span *ngIf="pasoActual <= 2">2</span>
+            <span *ngIf="pasoActual > 2">✓</span>
+          </div>
+          <div class="step-label">
+            <small>Paso 2</small>
+            <strong>Tu negocio</strong>
+          </div>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="step" [class.activo]="pasoActual === 3"
+             [class.completado]="false" (click)="irAPaso(3)">
+          <div class="step-circle">3</div>
+          <div class="step-label">
+            <small>Paso 3</small>
+            <strong>Operación</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- PASO 1 — DATOS LEGALES                        -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="wizard-card" *ngIf="pasoActual === 1">
+      <div class="card-icon">🏛️</div>
+      <h2>Información legal</h2>
+      <p class="card-desc">Necesitamos verificar la identidad de tu negocio ante SUNAT.</p>
+
+      <form [formGroup]="paso1" class="form-grid">
+
+        <div class="campo-full">
+          <label>RUC <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🔢</span>
+            <input type="text" formControlName="ruc"
+                   placeholder="Ej: 20123456789"
+                   maxlength="11" />
+          </div>
+          <span class="error-msg" *ngIf="invalido(paso1,'ruc')">
+            El RUC debe tener exactamente 11 dígitos
+          </span>
+          <span class="hint">Ingresa el RUC de tu empresa o persona natural con negocio</span>
+        </div>
+
+        <div class="campo">
+          <label>Razón social <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">🏢</span>
+            <input type="text" formControlName="razon_social"
+                   placeholder="Ej: INVERSIONES PEREZ SAC" />
+          </div>
+          <span class="error-msg" *ngIf="invalido(paso1,'razon_social')">
+            La razón social es obligatoria
+          </span>
+        </div>
+
+        <div class="campo">
+          <label>Nombre comercial <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">✏️</span>
+            <input type="text" formControlName="nombre"
+                   placeholder="Ej: Pollería El Tizón" />
+          </div>
+          <span class="error-msg" *ngIf="invalido(paso1,'nombre')">
+            El nombre comercial es obligatorio
+          </span>
+          <span class="hint">Así te verán los clientes en la app</span>
+        </div>
+
+      </form>
+
+      <div class="card-actions">
+        <span></span>
+        <button class="btn-green" (click)="siguiente()">
+          Siguiente → <span>Tu negocio</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- PASO 2 — TU NEGOCIO                           -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="wizard-card" *ngIf="pasoActual === 2">
+      <div class="card-icon">🏪</div>
+      <h2>Cuéntanos de tu negocio</h2>
+      <p class="card-desc">Esta información aparecerá en tu perfil público dentro de LlegaYa.</p>
+
+      <form [formGroup]="paso2" class="form-vertical">
+
+        <!-- Tipo de rubro -->
+        <div class="campo-full">
+          <label>Tipo de rubro <span class="req">*</span></label>
+          <div class="rubros-grid">
+            <button type="button"
+              *ngFor="let r of rubros"
+              class="rubro-btn"
+              [class.seleccionado]="paso2.get('categoria')?.value === r.valor"
+              (click)="seleccionarRubro(r.valor)">
+              <span class="rubro-icono">{{ r.icono }}</span>
+              <span class="rubro-label">{{ r.label }}</span>
+            </button>
+          </div>
+          <span class="error-msg"
+            *ngIf="paso2.get('categoria')?.touched && paso2.get('categoria')?.invalid">
+            Selecciona un rubro
+          </span>
+        </div>
+
+        <!-- Descripción -->
+        <div class="campo-full">
+          <label>Descripción breve <span class="req">*</span></label>
+          <div class="textarea-wrap">
+            <textarea formControlName="descripcion" rows="3"
+              placeholder="Ej: Especialistas en pollo a la brasa y parrillas desde 1998. Atendemos en Lince y Jesús María.">
+            </textarea>
+            <span class="char-count">
+              {{ paso2.get('descripcion')?.value?.length ?? 0 }}/200
+            </span>
+          </div>
+          <span class="error-msg" *ngIf="invalido(paso2,'descripcion')">
+            La descripción es obligatoria
+          </span>
+        </div>
+
+        <!-- Teléfono + Logo -->
+        <div class="form-grid">
+          <div class="campo">
+            <label>Teléfono del negocio <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">📱</span>
+              <input type="tel" formControlName="telefono"
+                     placeholder="Ej: 987654321" maxlength="9" />
+            </div>
+            <span class="error-msg" *ngIf="invalido(paso2,'telefono')">
+              Ingresa un celular de 9 dígitos
+            </span>
+          </div>
+
+          <div class="campo">
+            <label>Logo del negocio <span class="optional">(opcional)</span></label>
+            <label class="logo-upload" [class.tiene-logo]="logoPreview">
+              <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo" />
+              <div *ngIf="!logoPreview" class="logo-placeholder">
+                <span>🖼️</span>
+                <small>Subir logo</small>
+              </div>
+              <input type="file" accept="image/*"
+                     (change)="onLogoSeleccionado($event)"
+                     style="display:none" />
+            </label>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="card-actions">
+        <button class="btn-outline" (click)="anterior()">← Atrás</button>
+        <button class="btn-green" (click)="siguiente()">
+          Siguiente → <span>Operación</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!-- PASO 3 — OPERACIÓN                            -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="wizard-card" *ngIf="pasoActual === 3">
+      <div class="card-icon">📍</div>
+      <h2>Dirección y horarios</h2>
+      <p class="card-desc">¿Desde dónde despachás y en qué horario atendés?</p>
+
+      <form [formGroup]="paso3" class="form-vertical">
+
+        <!-- Dirección -->
+        <div class="campo-full">
+          <label>Dirección de recojo <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">📍</span>
+            <input type="text" formControlName="direccion"
+                   placeholder="Ej: Av. Arequipa 1234, Lince, Lima" />
+          </div>
+          <span class="error-msg" *ngIf="invalido(paso3,'direccion')">
+            La dirección es obligatoria
+          </span>
+        </div>
+
+        <!-- Días -->
+        <div class="campo-full">
+          <label>Días de atención</label>
+          <div class="dias-grid">
+            <button type="button"
+              *ngFor="let d of dias"
+              class="dia-btn"
+              [class.activo]="diasSeleccionados.has(d.key)"
+              (click)="toggleDia(d.key)">
+              {{ d.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Horarios -->
+        <div class="form-grid">
+          <div class="campo">
+            <label>Hora de apertura <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">🌅</span>
+              <input type="time" formControlName="hora_apertura" />
+            </div>
+          </div>
+          <div class="campo">
+            <label>Hora de cierre <span class="req">*</span></label>
+            <div class="input-wrap">
+              <span class="input-icon">🌙</span>
+              <input type="time" formControlName="hora_cierre" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumen horario -->
+        <div class="horario-preview">
+          <span class="hp-icon">🕐</span>
+          <span>
+            Atenderás de
+            <strong>{{ paso3.get('hora_apertura')?.value }}</strong>
+            a
+            <strong>{{ paso3.get('hora_cierre')?.value }}</strong>,
+            {{ diasSeleccionados.size }} día(s) a la semana
+          </span>
+        </div>
+
+      </form>
+
+      <!-- Error general -->
+      <div class="error-general" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+      <div class="card-actions">
+        <button class="btn-outline" (click)="anterior()">← Atrás</button>
+        <button class="btn-green btn-registrar"
+                (click)="registrar()"
+                [disabled]="guardando">
+          {{ guardando ? 'Registrando...' : '🚀 Registrar mi comercio' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

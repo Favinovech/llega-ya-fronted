@@ -1,0 +1,78 @@
+<div class="register-container">
+
+  <!-- Panel izquierdo -->
+  <div class="left">
+    <a class="brand" routerLink="/">
+      <svg class="brand-icon" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="16" fill="rgba(255,255,255,0.15)"/>
+        <path d="M8 20 C10 14, 14 12, 16 12 C18 12, 22 14, 24 20" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="10" cy="21" r="2.5" fill="white"/>
+        <circle cx="22" cy="21" r="2.5" fill="white"/>
+        <path d="M13 12 L16 7 L19 12" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span>LlegaYa</span>
+    </a>
+    <div class="left-hero">
+      <h2>Únete a miles de vecinos que ya usan LlegaYa</h2>
+      <p>Crea tu cuenta gratis y empieza a pedir en minutos.</p>
+    </div>
+    <div class="left-chips">
+      <span class="chip">Sin costo de registro</span>
+      <span class="chip">Entrega rápida</span>
+      <span class="chip">500+ comercios</span>
+    </div>
+  </div>
+
+  <!-- Panel derecho -->
+  <div class="right">
+    <div class="form-box">
+      <p class="form-title">Crear cuenta</p>
+      <p class="form-subtitle">Completa tus datos para empezar.</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="row-2">
+          <div class="field">
+            <label>Nombres *</label>
+            <input type="text" placeholder="Juan" formControlName="nombre"/>
+            <div class="field-error" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">Campo obligatorio</div>
+          </div>
+          <div class="field">
+            <label>Apellidos *</label>
+            <input type="text" placeholder="Pérez" formControlName="apellido"/>
+            <div class="field-error" *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">Campo obligatorio</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Correo electrónico *</label>
+          <input type="email" placeholder="tucorreo@ejemplo.com" formControlName="email"/>
+          <div class="field-error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">Correo inválido</div>
+        </div>
+
+        <div class="field">
+          <label>Celular <span class="optional">(opcional)</span></label>
+          <input type="tel" placeholder="987 654 321" formControlName="telefono"/>
+        </div>
+
+        <div class="field">
+          <label>Contraseña *</label>
+          <input type="password" placeholder="Mínimo 6 caracteres" formControlName="password"/>
+          <div class="field-error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">Mínimo 6 caracteres</div>
+        </div>
+
+        <div class="alert-error"   *ngIf="errorMessage">{{ errorMessage }}</div>
+        <div class="alert-success" *ngIf="exitoMessage">{{ exitoMessage }}</div>
+
+        <button class="btn-submit" type="submit" [disabled]="cargando">
+          {{ cargando ? 'Creando cuenta...' : 'Crear cuenta gratis' }}
+        </button>
+      </form>
+
+      <div class="login-link">
+        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,25 @@
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  min-width: 250px;
+  padding: 16px;
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  font-weight: 500;
+  z-index: 9999; /* Para que siempre esté por encima de todo */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  
+  /* Animación de entrada */
+  animation: slideUp 0.4s ease-out forwards;
+
+  &.success { background-color: #2e7d32; }
+  &.error { background-color: #d32f2f; }
+  &.info { background-color: #0288d1; }
+}
+
+@keyframes slideUp {
+  from { bottom: -50px; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
+}
