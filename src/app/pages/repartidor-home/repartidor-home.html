@@ -1,0 +1,164 @@
+<div class="repartidor-layout">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <svg class="brand-icon" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="16" fill="#2d8a4e"/>
+        <path d="M8 20 C10 14, 14 12, 16 12 C18 12, 22 14, 24 20" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="10" cy="21" r="2.5" fill="white"/>
+        <circle cx="22" cy="21" r="2.5" fill="white"/>
+        <path d="M13 12 L16 7 L19 12" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span>LlegaYa <em>Repartidor</em></span>
+    </div>
+
+    <div class="navbar-actions">
+      <div class="disponibilidad-toggle">
+        <span>{{ disponible ? 'Disponible' : 'No disponible' }}</span>
+        <label class="switch">
+          <input type="checkbox" [checked]="disponible" (change)="toggleDisponibilidad()">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="user-chip">
+        <div class="user-avatar">{{ iniciales }}</div>
+        <span>{{ usuario?.nombre }}</span>
+      </div>
+      <button class="btn-salir" (click)="salir()">Salir</button>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+
+    <!-- Encabezado de bienvenida -->
+    <section class="welcome-hero">
+      <div class="welcome-text">
+        <h1>Hola, {{ usuario?.nombre }} 👋</h1>
+        <p>{{ disponible ? 'Estás disponible para recibir pedidos.' : 'Activa tu disponibilidad para empezar.' }}</p>
+      </div>
+      <div class="estado-badge" [class.activo]="disponible" [class.inactivo]="!disponible">
+        {{ disponible ? '🟢 En línea' : '🔴 Fuera de línea' }}
+      </div>
+    </section>
+
+    <!-- Estadísticas rápidas -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalPedidos }}</span>
+          <span class="stat-label">Pedidos entregados</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-info">
+          <span class="stat-value">4.8</span>
+          <span class="stat-label">Calificación promedio</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🚀</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ vehiculoLabel }}</span>
+          <span class="stat-label">Tipo de vehículo</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📍</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ zona || 'Sin definir' }}</span>
+          <span class="stat-label">Zona de cobertura</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección Mi perfil de repartidor -->
+    <section class="perfil-section">
+      <div class="section-header">
+        <h2>Mi perfil de repartidor</h2>
+        <button class="btn-edit" (click)="mostrarEditor = !mostrarEditor">
+          {{ mostrarEditor ? 'Cancelar' : '✏️ Editar' }}
+        </button>
+      </div>
+
+      <!-- Vista de perfil -->
+      <div class="perfil-card" *ngIf="!mostrarEditor">
+        <div class="perfil-row">
+          <span class="perfil-label">Nombre completo</span>
+          <span class="perfil-value">{{ usuario?.nombre }} {{ usuario?.apellido }}</span>
+        </div>
+        <div class="perfil-row">
+          <span class="perfil-label">Correo</span>
+          <span class="perfil-value">{{ usuario?.email }}</span>
+        </div>
+        <div class="perfil-row">
+          <span class="perfil-label">DNI</span>
+          <span class="perfil-value">{{ perfil?.dni || 'No registrado' }}</span>
+        </div>
+        <div class="perfil-row">
+          <span class="perfil-label">Vehículo</span>
+          <span class="perfil-value">{{ vehiculoLabel }}</span>
+        </div>
+        <div class="perfil-row">
+          <span class="perfil-label">Zona de cobertura</span>
+          <span class="perfil-value">{{ perfil?.zona_cobertura || 'No definida' }}</span>
+        </div>
+      </div>
+
+      <!-- Formulario de edición -->
+      <div class="perfil-edit" *ngIf="mostrarEditor">
+        <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()">
+          <div class="field">
+            <label>DNI</label>
+            <input type="text" placeholder="12345678" maxlength="8" formControlName="dni"/>
+          </div>
+          <div class="field">
+            <label>Tipo de vehículo</label>
+            <select formControlName="vehiculo">
+              <option value="moto">Moto</option>
+              <option value="bicicleta">Bicicleta</option>
+              <option value="a_pie">A pie</option>
+              <option value="auto">Auto</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Zona de cobertura</label>
+            <input type="text" placeholder="Ej: Miraflores, San Isidro" formControlName="zona_cobertura"/>
+          </div>
+          <div class="alert-error"   *ngIf="errorMsg">{{ errorMsg }}</div>
+          <div class="alert-success" *ngIf="exitoMsg">{{ exitoMsg }}</div>
+          <button class="btn-guardar" type="submit" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Próximamente -->
+    <section class="proximos">
+      <h2>Próximamente</h2>
+      <div class="proximos-grid">
+        <div class="proximo-card">
+          <div class="proximo-icon">📋</div>
+          <p>Ver pedidos disponibles</p>
+        </div>
+        <div class="proximo-card">
+          <div class="proximo-icon">🗺️</div>
+          <p>Mapa de entregas</p>
+        </div>
+        <div class="proximo-card">
+          <div class="proximo-icon">💰</div>
+          <p>Mis ganancias</p>
+        </div>
+        <div class="proximo-card">
+          <div class="proximo-icon">📊</div>
+          <p>Historial de rutas</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

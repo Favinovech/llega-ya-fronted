@@ -51,8 +51,9 @@ export class Login implements OnInit {
     this.errorMessage = '';
 
     this.auth.login(email, password).subscribe({
-      next: (respuesta: any) => { // Agregamos 'respuesta' por si acaso
+      next: () => {
         this.cargando = false;
+
         if (remember) {
           localStorage.setItem('saved_email', email);
           localStorage.setItem('saved_password', password);
@@ -61,35 +62,20 @@ export class Login implements OnInit {
           localStorage.removeItem('saved_password');
         }
 
-        // --- NUEVA LÓGICA DE REDIRECCIÓN INTELIGENTE ---
-        // 1. Buscamos el token donde suele guardarse
-        const token = localStorage.getItem('token') || localStorage.getItem('access_token') || (respuesta && respuesta.access);
+        const rol = this.auth.getRol();
 
-        if (token) {
-          try {
-            // 2. Decodificamos el token (reemplazamos caracteres de Base64Url a Base64 estándar por seguridad)
-            const payloadBase64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-            const payloadDecodificado = JSON.parse(atob(payloadBase64));
-
-            // 3. Evaluamos el rol
-            if (payloadDecodificado.rol === 'admin') {
-              this.router.navigate(['/admin']);
-            } else {
-              this.router.navigate(['/home']);
-            }
-          } catch (error) {
-            console.error('Error al leer el token:', error);
-            this.router.navigate(['/home']); // Fallback de seguridad
-          }
+        if (rol === 'admin') {
+          this.router.navigate(['/admin']);
+        } else if (rol === 'repartidor') {
+          this.router.navigate(['/repartidor']);
         } else {
-          this.router.navigate(['/home']); // Fallback si no encuentra el token
+          this.router.navigate(['/home']);
         }
-        // -----------------------------------------------
       },
       error: () => {
         this.cargando = false;
         this.errorMessage = 'Correo o contraseña incorrectos.';
       }
     });
-}
+  }
 }
