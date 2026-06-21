@@ -1,0 +1,353 @@
+$green:       #2d8a4e;
+$green-light: #e8f5ee;
+$dark:        #111827;
+$gray:        #6b7280;
+$border:      #e5e7eb;
+$bg:          #f9fafb;
+
+.repartidor-layout {
+  min-height: 100vh;
+  background: $bg;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Navbar ── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: $dark;
+
+  em {
+    color: $green;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    background: $green-light;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 4px;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.disponibilidad-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: $gray;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+
+  input { opacity: 0; width: 0; height: 0; }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 22px;
+    transition: background 0.2s;
+
+    &:before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+  }
+
+  input:checked + .slider {
+    background: $green;
+    &:before { transform: translateX(18px); }
+  }
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $dark;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $green;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.btn-salir {
+  padding: 6px 16px;
+  border: 1px solid $border;
+  border-radius: 8px;
+  background: #fff;
+  color: $gray;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: $bg; }
+}
+
+/* ── Main Content ── */
+.main-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ── Welcome ── */
+.welcome-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $green;
+  color: #fff;
+  border-radius: 16px;
+  padding: 28px 32px;
+
+  h1 { font-size: 24px; font-weight: 700; margin: 0 0 6px; }
+  p  { font-size: 15px; opacity: 0.85; margin: 0; }
+}
+
+.estado-badge {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 20px;
+
+  &.activo   { background: rgba(255,255,255,0.25); color: #fff; }
+  &.inactivo { background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.7); }
+}
+
+/* ── Stats ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .stat-icon  { font-size: 28px; }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: $dark;
+    text-transform: capitalize;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: $gray;
+  }
+}
+
+/* ── Perfil ── */
+.perfil-section {
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h2 { font-size: 18px; font-weight: 700; color: $dark; margin: 0; }
+}
+
+.btn-edit {
+  padding: 6px 16px;
+  border: 1px solid $green;
+  border-radius: 8px;
+  background: $green-light;
+  color: $green;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: #d4edda; }
+}
+
+.perfil-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid $border;
+  font-size: 14px;
+
+  &:last-child { border-bottom: none; }
+
+  .perfil-label { color: $gray; }
+  .perfil-value { font-weight: 500; color: $dark; }
+}
+
+.perfil-edit {
+  .field {
+    margin-bottom: 16px;
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: $dark;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid $border;
+      border-radius: 8px;
+      font-size: 14px;
+      color: $dark;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: $green;
+        box-shadow: 0 0 0 3px rgba(45, 138, 78, 0.1);
+      }
+    }
+  }
+}
+
+.btn-guardar {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: $green;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.alert-success {
+  background: $green-light;
+  color: $green;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* ── Próximamente ── */
+.proximos {
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: $dark;
+    margin: 0 0 16px;
+  }
+}
+
+.proximos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.proximo-card {
+  background: #fff;
+  border: 1px dashed $border;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+
+  .proximo-icon { font-size: 28px; margin-bottom: 8px; }
+  p { font-size: 13px; color: $gray; margin: 0; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .navbar { padding: 0 16px; }
+  .welcome-hero { flex-direction: column; gap: 16px; padding: 24px 20px; }
+  .main-content { padding: 20px 16px; }
+}

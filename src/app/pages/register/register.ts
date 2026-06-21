@@ -16,19 +16,34 @@ export class Register {
   errorMessage = '';
   exitoMessage = '';
   cargando = false;
+  tipoSeleccionado: 'cliente' | 'repartidor' | '' = '';
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private auth: AuthService
   ) {
+    this.buildForm();
+  }
+
+  buildForm() {
     this.form = this.fb.group({
-      nombre:   ['', Validators.required],
-      apellido: ['', Validators.required],
-      email:    ['', [Validators.required, Validators.email]],
-      telefono: [''],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      nombre:         ['', Validators.required],
+      apellido:       ['', Validators.required],
+      email:          ['', [Validators.required, Validators.email]],
+      telefono:       [''],
+      password:       ['', [Validators.required, Validators.minLength(6)]],
+      dni:            [''],
+      vehiculo:       ['moto'],
+      zona_cobertura: [''],
     });
+  }
+
+  seleccionarTipo(tipo: 'cliente' | 'repartidor') {
+    this.tipoSeleccionado = tipo;
+    this.errorMessage = '';
+    this.exitoMessage = '';
+    this.form.reset({ vehiculo: 'moto' });
   }
 
   onSubmit() {
@@ -37,17 +52,34 @@ export class Register {
       this.errorMessage = 'Completa todos los campos obligatorios.';
       return;
     }
+
     this.cargando = true;
     this.errorMessage = '';
-    this.auth.register(this.form.value).subscribe({
+
+    const payload: any = {
+      nombre:     this.form.value.nombre,
+      apellido:   this.form.value.apellido,
+      email:      this.form.value.email,
+      telefono:   this.form.value.telefono,
+      password:   this.form.value.password,
+      rol_nombre: this.tipoSeleccionado,
+    };
+
+    if (this.tipoSeleccionado === 'repartidor') {
+      payload.dni            = this.form.value.dni;
+      payload.vehiculo       = this.form.value.vehiculo;
+      payload.zona_cobertura = this.form.value.zona_cobertura;
+    }
+
+    this.auth.register(payload).subscribe({
       next: () => {
         this.cargando = false;
-        this.exitoMessage = '¡Cuenta creada! Redirigiendo...';
+        this.exitoMessage = '¡Cuenta creada! Redirigiendo al inicio de sesión...';
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err: any) => {
         this.cargando = false;
-        this.errorMessage = err.error?.email?.[0] ?? 'Error al registrar.';
+        this.errorMessage = err.error?.email?.[0] ?? 'Error al registrar. Intenta de nuevo.';
       }
     });
   }

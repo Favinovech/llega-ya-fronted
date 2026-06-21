@@ -13,65 +13,141 @@
       <span>LlegaYa</span>
     </a>
     <div class="left-hero">
-      <h2>Únete a miles de vecinos que ya usan LlegaYa</h2>
-      <p>Crea tu cuenta gratis y empieza a pedir en minutos.</p>
+      <ng-container *ngIf="tipoSeleccionado === 'cliente'">
+        <h2>Únete a miles de vecinos que ya usan LlegaYa</h2>
+        <p>Crea tu cuenta gratis y empieza a pedir en minutos.</p>
+      </ng-container>
+      <ng-container *ngIf="tipoSeleccionado === 'repartidor'">
+        <h2>Gana dinero repartiendo con LlegaYa</h2>
+        <p>Únete a nuestra red de repartidores y genera ingresos extra.</p>
+      </ng-container>
+      <ng-container *ngIf="!tipoSeleccionado">
+        <h2>¿Cómo quieres usar LlegaYa?</h2>
+        <p>Elige cómo quieres unirte a nuestra plataforma.</p>
+      </ng-container>
     </div>
     <div class="left-chips">
       <span class="chip">Sin costo de registro</span>
-      <span class="chip">Entrega rápida</span>
-      <span class="chip">500+ comercios</span>
+      <span class="chip" *ngIf="tipoSeleccionado !== 'repartidor'">Entrega rápida</span>
+      <span class="chip" *ngIf="tipoSeleccionado !== 'repartidor'">500+ comercios</span>
+      <span class="chip" *ngIf="tipoSeleccionado === 'repartidor'">Horarios flexibles</span>
+      <span class="chip" *ngIf="tipoSeleccionado === 'repartidor'">Pagos semanales</span>
     </div>
   </div>
 
   <!-- Panel derecho -->
   <div class="right">
     <div class="form-box">
-      <p class="form-title">Crear cuenta</p>
-      <p class="form-subtitle">Completa tus datos para empezar.</p>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- PASO 1: Elegir tipo de cuenta -->
+      <ng-container *ngIf="!tipoSeleccionado">
+        <p class="form-title">Crear cuenta</p>
+        <p class="form-subtitle">¿Cómo deseas registrarte?</p>
 
-        <div class="row-2">
-          <div class="field">
-            <label>Nombres *</label>
-            <input type="text" placeholder="Juan" formControlName="nombre"/>
-            <div class="field-error" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">Campo obligatorio</div>
-          </div>
-          <div class="field">
-            <label>Apellidos *</label>
-            <input type="text" placeholder="Pérez" formControlName="apellido"/>
-            <div class="field-error" *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">Campo obligatorio</div>
-          </div>
+        <div class="tipo-selector">
+          <button class="tipo-btn" (click)="seleccionarTipo('cliente')">
+            <div class="tipo-icon">🛒</div>
+            <div class="tipo-info">
+              <strong>Soy cliente</strong>
+              <span>Quiero pedir comida, medicinas y más</span>
+            </div>
+            <div class="tipo-arrow">→</div>
+          </button>
+
+          <button class="tipo-btn" (click)="seleccionarTipo('repartidor')">
+            <div class="tipo-icon">🛵</div>
+            <div class="tipo-info">
+              <strong>Soy repartidor</strong>
+              <span>Quiero ganar dinero haciendo entregas</span>
+            </div>
+            <div class="tipo-arrow">→</div>
+          </button>
         </div>
 
-        <div class="field">
-          <label>Correo electrónico *</label>
-          <input type="email" placeholder="tucorreo@ejemplo.com" formControlName="email"/>
-          <div class="field-error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">Correo inválido</div>
+        <div class="login-link">
+          ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
         </div>
+      </ng-container>
 
-        <div class="field">
-          <label>Celular <span class="optional">(opcional)</span></label>
-          <input type="tel" placeholder="987 654 321" formControlName="telefono"/>
-        </div>
-
-        <div class="field">
-          <label>Contraseña *</label>
-          <input type="password" placeholder="Mínimo 6 caracteres" formControlName="password"/>
-          <div class="field-error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">Mínimo 6 caracteres</div>
-        </div>
-
-        <div class="alert-error"   *ngIf="errorMessage">{{ errorMessage }}</div>
-        <div class="alert-success" *ngIf="exitoMessage">{{ exitoMessage }}</div>
-
-        <button class="btn-submit" type="submit" [disabled]="cargando">
-          {{ cargando ? 'Creando cuenta...' : 'Crear cuenta gratis' }}
+      <!-- PASO 2: Formulario según tipo -->
+      <ng-container *ngIf="tipoSeleccionado">
+        <button class="btn-back" (click)="tipoSeleccionado = ''">
+          ← Volver
         </button>
-      </form>
 
-      <div class="login-link">
-        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
-      </div>
+        <p class="form-title">
+          {{ tipoSeleccionado === 'cliente' ? 'Crear cuenta de cliente' : 'Crear cuenta de repartidor' }}
+        </p>
+        <p class="form-subtitle">Completa tus datos para empezar.</p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+          <div class="row-2">
+            <div class="field">
+              <label>Nombres *</label>
+              <input type="text" placeholder="Juan" formControlName="nombre"/>
+              <div class="field-error" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">Campo obligatorio</div>
+            </div>
+            <div class="field">
+              <label>Apellidos *</label>
+              <input type="text" placeholder="Pérez" formControlName="apellido"/>
+              <div class="field-error" *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">Campo obligatorio</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Correo electrónico *</label>
+            <input type="email" placeholder="tucorreo@ejemplo.com" formControlName="email"/>
+            <div class="field-error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">Correo inválido</div>
+          </div>
+
+          <div class="field">
+            <label>Celular <span class="optional">(opcional)</span></label>
+            <input type="tel" placeholder="987 654 321" formControlName="telefono"/>
+          </div>
+
+          <!-- Campos extra solo para repartidor -->
+          <ng-container *ngIf="tipoSeleccionado === 'repartidor'">
+            <div class="field">
+              <label>DNI <span class="optional">(opcional)</span></label>
+              <input type="text" placeholder="12345678" maxlength="8" formControlName="dni"/>
+            </div>
+
+            <div class="field">
+              <label>Tipo de vehículo *</label>
+              <select formControlName="vehiculo">
+                <option value="moto">Moto</option>
+                <option value="bicicleta">Bicicleta</option>
+                <option value="a_pie">A pie</option>
+                <option value="auto">Auto</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Zona de cobertura <span class="optional">(opcional)</span></label>
+              <input type="text" placeholder="Ej: Miraflores, San Isidro" formControlName="zona_cobertura"/>
+            </div>
+          </ng-container>
+
+          <div class="field">
+            <label>Contraseña *</label>
+            <input type="password" placeholder="Mínimo 6 caracteres" formControlName="password"/>
+            <div class="field-error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">Mínimo 6 caracteres</div>
+          </div>
+
+          <div class="alert-error"   *ngIf="errorMessage">{{ errorMessage }}</div>
+          <div class="alert-success" *ngIf="exitoMessage">{{ exitoMessage }}</div>
+
+          <button class="btn-submit" type="submit" [disabled]="cargando">
+            {{ cargando ? 'Creando cuenta...' : 'Crear cuenta gratis' }}
+          </button>
+        </form>
+
+        <div class="login-link">
+          ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+        </div>
+      </ng-container>
+
     </div>
   </div>
 

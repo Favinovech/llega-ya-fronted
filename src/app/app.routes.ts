@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { repartidorGuard } from './guards/repartidor.guard';
 import { Landing } from './pages/landing/landing';
 import { Home } from './pages/home/home';
 import { Comercios } from './pages/comercios/comercios';
@@ -18,11 +19,11 @@ export const routes: Routes = [
   { path: 'reset-password',  loadComponent: () =>
       import('./pages/reset-password/reset-password').then(m => m.ResetPassword) },
 
-  // Autenticadas
-  { path: 'home',     component: Home,       canActivate: [authGuard] },
-  { path: 'profile',  component: Profile,    canActivate: [authGuard] },
-  { path: 'comercios',component: Comercios,  canActivate: [authGuard] },
-  { path: 'carrito',  component: Carrito,    canActivate: [authGuard] },
+  // Autenticadas (cliente/admin)
+  { path: 'home',        component: Home,       canActivate: [authGuard] },
+  { path: 'profile',     component: Profile,    canActivate: [authGuard] },
+  { path: 'comercios',   component: Comercios,  canActivate: [authGuard] },
+  { path: 'carrito',     component: Carrito,    canActivate: [authGuard] },
   { path: 'mi-comercio', component: MiComercio, canActivate: [authGuard] },
   { path: 'catalogo', canActivate: [authGuard],
     loadComponent: () => import('./pages/catalogo/catalogo').then(m => m.Catalogo) },
@@ -34,6 +35,10 @@ export const routes: Routes = [
   // Solo admin
   { path: 'admin', canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./pages/admin/admin').then(m => m.Admin) },
+
+  // Solo repartidor
+  { path: 'repartidor', canActivate: [repartidorGuard],
+    loadComponent: () => import('./pages/repartidor-home/repartidor-home').then(m => m.RepartidorHome) },
 
   { path: '**', redirectTo: '' },
 ];
