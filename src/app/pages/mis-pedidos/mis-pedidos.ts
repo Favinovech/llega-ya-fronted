@@ -1,11 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, DestroyRef, inject, ChangeDetectorRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { timeout, retry } from 'rxjs';
 import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
+import { CalificacionService, Calificacion } from '../../services/calificacion.service';
 import { environment } from '../../../environments/environment';
 
 interface DetallePedido {
@@ -22,8 +25,10 @@ interface Pedido {
   direccion_entrega: string;
   created_at: string;
   negocio: number;
+  repartidor?: any | null;
   detalles: DetallePedido[];
   motivo_cancelacion?: string | null;
+  calificacion?: Calificacion | null;
 }
 
 @Component({
@@ -34,7 +39,8 @@ interface Pedido {
   styleUrl: './mis-pedidos.scss'
 })
 export class MisPedidos implements OnInit {
-  private api = environment.apiUrl;
+  private api        = environment.apiUrl;
+  private destroyRef = inject(DestroyRef);
   pedidos: Pedido[] = [];
   cargando  = true;
   errorMsg  = '';
@@ -44,55 +50,60 @@ export class MisPedidos implements OnInit {
   pedidoAcancelar: Pedido | null = null;
   motivoCancelacion  = '';
 
+  // Modal calificación
+  mostrarModalCalificacion  = false;
+  pedidoACalificar: Pedido | null = null;
+  estrellasSeleccionadas    = 0;
+  hoverEstrella             = 0;
+  comentarioCalificacion    = '';
+  enviandoCalificacion      = false;
+  readonly estrellas        = [1, 2, 3, 4, 5];
+
   constructor(
     private http: HttpClient,
     private toast: ToastService,
+    private calificacionSvc: CalificacionService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-  this.cargarPedidos();
-
-  // Timeout de seguridad — si en 8s no cargó, quita el spinner
-  setTimeout(() => {
-    if (this.cargando) {
-      this.cargando = false;
-      this.errorMsg = 'La carga tardó demasiado. Intenta recargar.';
-    }
-  }, 8000);
-}
+    this.cargarPedidos();
+  }
 
   cargarPedidos() {
-  this.cargando = true;
-  this.errorMsg = '';
-  this.http.get<Pedido[]>(`${this.api}/pedidos/`).subscribe({
-    next: (data) => {
-      this.pedidos  = data;
-      this.cargando = false;
-      this.cdr.detectChanges();
-    },
-    error: () => {
-      this.errorMsg = 'No se pudieron cargar los pedidos.';
-      this.cargando = false;
-      this.cdr.detectChanges();
-    }
-  });
-}
+    this.cargando = true;
+    this.errorMsg = '';
+    this.http.get<Pedido[]>(`${this.api}/pedidos/`).pipe(
+      timeout(20000),
+      retry({ count: 2, delay: 1500 }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (data) => {
+        this.pedidos  = data;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorMsg = 'No se pudieron cargar los pedidos.';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
-  // Abre el modal
+  // ── Modal cancelación ────────────────────────────
+
   abrirModalCancelacion(pedido: Pedido) {
     this.pedidoAcancelar    = pedido;
     this.motivoCancelacion  = '';
     this.mostrarModal       = true;
   }
 
-  // Cierra el modal
   cerrarModal() {
-    this.mostrarModal      = false;
+    this.mostrarModal = false;
     this.cdr.detectChanges();
   }
 
-  // Confirma la cancelación
   confirmarCancelacion() {
     if (!this.pedidoAcancelar) return;
 
@@ -110,6 +121,72 @@ export class MisPedidos implements OnInit {
     });
   }
 
+  // ── Modal calificación ───────────────────────────
+
+  puedeCalificar(pedido: Pedido): boolean {
+    return (pedido.estado === 'entregado' || pedido.estado === 'completado')
+      && !!pedido.repartidor
+      && !pedido.calificacion;
+  }
+
+  abrirModalCalificacion(pedido: Pedido) {
+    this.pedidoACalificar         = pedido;
+    this.estrellasSeleccionadas   = 0;
+    this.hoverEstrella            = 0;
+    this.comentarioCalificacion   = '';
+    this.enviandoCalificacion     = false;
+    this.mostrarModalCalificacion = true;
+  }
+
+  cerrarModalCalificacion() {
+    this.mostrarModalCalificacion = false;
+    this.cdr.detectChanges();
+  }
+
+  seleccionarEstrella(n: number) {
+    this.estrellasSeleccionadas = n;
+  }
+
+  estrellaActiva(n: number): boolean {
+    return n <= (this.hoverEstrella || this.estrellasSeleccionadas);
+  }
+
+  etiquetaEstrellas(): string {
+    const labels: Record<number, string> = {
+      1: 'Muy malo',
+      2: 'Malo',
+      3: 'Regular',
+      4: 'Bueno',
+      5: 'Excelente',
+    };
+    return labels[this.hoverEstrella || this.estrellasSeleccionadas] ?? 'Selecciona una calificación';
+  }
+
+  enviarCalificacion() {
+    if (!this.pedidoACalificar || !this.estrellasSeleccionadas) return;
+    this.enviandoCalificacion = true;
+
+    this.calificacionSvc.calificar(
+      this.pedidoACalificar.id,
+      this.estrellasSeleccionadas,
+      this.comentarioCalificacion.trim()
+    ).subscribe({
+      next: (cal) => {
+        const pedido = this.pedidos.find(p => p.id === this.pedidoACalificar!.id);
+        if (pedido) pedido.calificacion = cal;
+        this.toast.mostrarExito('¡Gracias por tu calificación!');
+        this.cerrarModalCalificacion();
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.enviandoCalificacion = false;
+        this.toast.mostrarError(err.error?.error ?? 'No se pudo enviar la calificación.');
+      }
+    });
+  }
+
+  // ── Helpers ──────────────────────────────────────
+
   etiquetaEstado(estado: string): string {
     const mapa: Record<string, string> = {
       pendiente:  'Pendiente',
@@ -117,12 +194,16 @@ export class MisPedidos implements OnInit {
       en_camino:  'En camino',
       entregado:  'Entregado',
       cancelado:  'Cancelado',
-      completado: 'Completado'  // ← nuevo
+      completado: 'Completado'
     };
     return mapa[estado] ?? estado;
   }
 
   claseEstado(estado: string): string {
     return `estado-${estado}`;
+  }
+
+  rango(n: number): number[] {
+    return Array.from({ length: n }, (_, i) => i + 1);
   }
 }

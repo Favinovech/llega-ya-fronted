@@ -13,100 +13,205 @@
 
   <div class="page-body">
 
-    <div class="loading-state" *ngIf="cargando">
-      <div class="spinner"></div>
-      <span>Cargando pedidos...</span>
-    </div>
-
-    <div class="error-banner" *ngIf="errorMsg">{{ errorMsg }}</div>
-
-    <div class="empty-state" *ngIf="!cargando && pedidos.length === 0 && !errorMsg">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-      </svg>
-      <p>Aún no tienes pedidos</p>
-      <a routerLink="/comercios" class="btn-primary">Explorar comercios</a>
-    </div>
-
-    <div class="pedidos-list" *ngIf="!cargando && pedidos.length > 0">
-      <div class="pedido-card" *ngFor="let pedido of pedidos">
-
-        <div class="pedido-head">
-          <div class="pedido-id">
-            <span class="label">Pedido</span>
-            <strong>#{{ pedido.id }}</strong>
-          </div>
-          <span class="estado-badge" [ngClass]="claseEstado(pedido.estado)">
-            {{ etiquetaEstado(pedido.estado) }}
-          </span>
-        </div>
-
-        <div class="pedido-meta">
-          <div class="meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            {{ pedido.direccion_entrega }}
-          </div>
-          <div class="meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            {{ pedido.created_at | date:'dd/MM/yyyy HH:mm' }}
-          </div>
-          <div class="meta-item total">
-            <strong>S/ {{ pedido.total }}</strong>
-          </div>
-        </div>
-
-        <div class="pedido-productos">
-          <p class="productos-label">Productos</p>
-          <div class="productos-list">
-            <div class="producto-row" *ngFor="let d of pedido.detalles">
-              <span>Producto #{{ d.producto }}</span>
-              <span>x{{ d.cantidad }}</span>
-              <span>S/ {{ d.precio_unitario }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pedido-footer" *ngIf="pedido.estado === 'pendiente'">
-          <button class="btn-cancelar" (click)="abrirModalCancelacion(pedido)">Cancelar pedido</button>
-        </div>
-
-        <div class="cancelado-info" *ngIf="pedido.estado === 'cancelado'">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          Pedido cancelado
-          <span *ngIf="pedido.motivo_cancelacion"> — "{{ pedido.motivo_cancelacion }}"</span>
-        </div>
-
-        <div class="completado-info" *ngIf="pedido.estado === 'completado'">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
-          Pedido completado
-        </div>
-
+    @if (cargando) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <span>Cargando pedidos...</span>
       </div>
-    </div>
+    }
+
+    @if (errorMsg) {
+      <div class="error-banner">
+        {{ errorMsg }}
+        <button class="btn-reintentar" (click)="cargarPedidos()">Reintentar</button>
+      </div>
+    }
+
+    @if (!cargando && pedidos.length === 0 && !errorMsg) {
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+        <p>Aún no tienes pedidos</p>
+        <a routerLink="/comercios" class="btn-primary">Explorar comercios</a>
+      </div>
+    }
+
+    @if (!cargando && pedidos.length > 0) {
+      <div class="pedidos-list">
+        @for (pedido of pedidos; track pedido.id) {
+          <div class="pedido-card">
+
+            <div class="pedido-head">
+              <div class="pedido-id">
+                <span class="label">Pedido</span>
+                <strong>#{{ pedido.id }}</strong>
+              </div>
+              <span class="estado-badge" [ngClass]="claseEstado(pedido.estado)">
+                {{ etiquetaEstado(pedido.estado) }}
+              </span>
+            </div>
+
+            <div class="pedido-meta">
+              <div class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{ pedido.direccion_entrega }}
+              </div>
+              <div class="meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                {{ pedido.created_at | date:'dd/MM/yyyy HH:mm' }}
+              </div>
+              <div class="meta-item total">
+                <strong>S/ {{ pedido.total }}</strong>
+              </div>
+            </div>
+
+            <div class="pedido-productos">
+              <p class="productos-label">Productos</p>
+              <div class="productos-list">
+                @for (d of pedido.detalles; track d.id) {
+                  <div class="producto-row">
+                    <span>Producto #{{ d.producto }}</span>
+                    <span>x{{ d.cantidad }}</span>
+                    <span>S/ {{ d.precio_unitario }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Cancelar (solo pendiente) -->
+            @if (pedido.estado === 'pendiente') {
+              <div class="pedido-footer">
+                <button class="btn-cancelar" (click)="abrirModalCancelacion(pedido)">Cancelar pedido</button>
+              </div>
+            }
+
+            <!-- Info cancelado -->
+            @if (pedido.estado === 'cancelado') {
+              <div class="cancelado-info">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                Pedido cancelado
+                @if (pedido.motivo_cancelacion) {
+                  <span> — "{{ pedido.motivo_cancelacion }}"</span>
+                }
+              </div>
+            }
+
+            <!-- Info completado (sin repartidor o ya calificado) -->
+            @if (pedido.estado === 'completado' && !puedeCalificar(pedido) && !pedido.calificacion) {
+              <div class="completado-info">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+                Pedido completado
+              </div>
+            }
+
+            <!-- Calificar repartidor -->
+            @if (puedeCalificar(pedido)) {
+              <div class="pedido-footer pedido-footer-calificar">
+                <div class="calificar-prompt">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span>¿Cómo fue tu experiencia con el repartidor?</span>
+                </div>
+                <button class="btn-calificar" (click)="abrirModalCalificacion(pedido)">Calificar repartidor</button>
+              </div>
+            }
+
+            <!-- Calificación ya enviada -->
+            @if (pedido.calificacion) {
+              <div class="calificacion-display">
+                <div class="cal-header">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  Tu calificación
+                </div>
+                <div class="cal-stars">
+                  @for (s of estrellas; track s) {
+                    <span class="star-display" [class.filled]="s <= pedido.calificacion!.estrellas">★</span>
+                  }
+                </div>
+                @if (pedido.calificacion.comentario) {
+                  <p class="cal-comentario">"{{ pedido.calificacion.comentario }}"</p>
+                }
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    }
+
   </div>
 </div>
 
 <app-footer></app-footer>
 
-<!-- MODAL -->
-<div class="modal-backdrop" *ngIf="mostrarModal" (click)="cerrarModal()">
-  <div class="modal" (click)="$event.stopPropagation()">
-    <div class="modal-head">
-      <h3>Cancelar pedido #{{ pedidoAcancelar?.id }}</h3>
-      <button class="modal-close" (click)="cerrarModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p>¿Estás seguro que deseas cancelar este pedido?</p>
-      <div class="field">
-        <label>Motivo <span class="optional">(opcional)</span></label>
-        <textarea [(ngModel)]="motivoCancelacion" placeholder="Ej: Me equivoqué en el pedido..." rows="3"></textarea>
+<!-- MODAL CANCELACIÓN -->
+@if (mostrarModal) {
+  <div class="modal-backdrop" (click)="cerrarModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h3>Cancelar pedido #{{ pedidoAcancelar?.id }}</h3>
+        <button class="modal-close" (click)="cerrarModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro que deseas cancelar este pedido?</p>
+        <div class="field">
+          <label>Motivo <span class="optional">(opcional)</span></label>
+          <textarea [(ngModel)]="motivoCancelacion" placeholder="Ej: Me equivoqué en el pedido..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" (click)="cerrarModal()">No, mantener</button>
+        <button class="btn-danger" (click)="confirmarCancelacion()">Sí, cancelar pedido</button>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-ghost" (click)="cerrarModal()">No, mantener</button>
-      <button class="btn-danger" (click)="confirmarCancelacion()">Sí, cancelar pedido</button>
+  </div>
+}
+
+<!-- MODAL CALIFICACIÓN -->
+@if (mostrarModalCalificacion) {
+  <div class="modal-backdrop" (click)="cerrarModalCalificacion()">
+    <div class="modal modal-calificacion" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <h3>Calificar repartidor — Pedido #{{ pedidoACalificar?.id }}</h3>
+        <button class="modal-close" (click)="cerrarModalCalificacion()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>¿Cómo fue tu experiencia con el repartidor?</p>
+
+        <!-- Sistema de estrellas interactivo -->
+        <div class="stars-input-wrap">
+          <div class="stars-input">
+            @for (s of estrellas; track s) {
+              <span class="star-btn"
+                    [class.active]="estrellaActiva(s)"
+                    (click)="seleccionarEstrella(s)"
+                    (mouseenter)="hoverEstrella = s"
+                    (mouseleave)="hoverEstrella = 0">★</span>
+            }
+          </div>
+          <span class="stars-label">{{ etiquetaEstrellas() }}</span>
+        </div>
+
+        <!-- Comentario -->
+        <div class="field">
+          <label>Comentario <span class="optional">(opcional)</span></label>
+          <textarea [(ngModel)]="comentarioCalificacion"
+                    placeholder="Cuéntanos tu experiencia con el repartidor..."
+                    rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" (click)="cerrarModalCalificacion()">Cancelar</button>
+        <button class="btn-calificar-submit"
+                (click)="enviarCalificacion()"
+                [disabled]="!estrellasSeleccionadas || enviandoCalificacion">
+          {{ enviandoCalificacion ? 'Enviando...' : 'Enviar calificación' }}
+        </button>
+      </div>
     </div>
   </div>
-</div>
+}

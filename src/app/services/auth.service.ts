@@ -11,12 +11,18 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(email: string, password: string) {
-    return this.http.post<any>(`${this.api}/login/`, { email, password }).pipe(
+    return this.http.post<any>(`${this.api}/login/`, { email, password }, { withCredentials: true }).pipe(
       tap(res => {
         localStorage.setItem('access', res.access);
-        localStorage.setItem('refresh', res.refresh);
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
+        // El refresh_token llega como cookie HttpOnly; NO se guarda en localStorage.
       })
+    );
+  }
+
+  refreshToken() {
+    return this.http.post<{ access: string }>(`${this.api}/token/refresh/`, {}, { withCredentials: true }).pipe(
+      tap(res => localStorage.setItem('access', res.access))
     );
   }
 
@@ -28,11 +34,12 @@ export class AuthService {
     return this.http.post<any>(`${this.api}/repartidor/register/`, data);
   }
 
-  logout() {
-    const refresh = localStorage.getItem('refresh');
-    this.http.post(`${this.api}/logout/`, { refresh }).subscribe();
-    localStorage.clear();
-    this.router.navigate(['/']);
+  logout(redirectTo: string = '/') {
+    this.http.post(`${this.api}/logout/`, {}, { withCredentials: true }).subscribe({ error: () => {} });
+    localStorage.removeItem('access');
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('refresh');
+    this.router.navigate([redirectTo]);
   }
 
   getToken(): string | null {

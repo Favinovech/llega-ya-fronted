@@ -55,8 +55,10 @@
       <div class="stat-card">
         <div class="stat-icon">⭐</div>
         <div class="stat-info">
-          <span class="stat-value">4.8</span>
-          <span class="stat-label">Calificación promedio</span>
+          <span class="stat-value">
+            {{ promedioCalificacion !== null ? (promedioCalificacion | number:'1.1-1') : '—' }}
+          </span>
+          <span class="stat-label">Calificación promedio ({{ totalCalificaciones }})</span>
         </div>
       </div>
       <div class="stat-card">

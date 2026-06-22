@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RepartidorService } from '../../services/repartidor.service';
 import { PedidoService } from '../../services/pedido.service';
+import { CalificacionService } from '../../services/calificacion.service';
 import { Footer } from '../components/footer/footer';
 
 @Component({
@@ -35,6 +36,9 @@ export class RepartidorHome implements OnInit, OnDestroy {
   cargandoPedidos = false;
   actualizandoId: number | null = null;
 
+  promedioCalificacion: number | null = null;
+  totalCalificaciones = 0;
+
   perfilForm!: FormGroup;
 
   get iniciales(): string {
@@ -64,6 +68,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
     private auth: AuthService,
     private repartidorSvc: RepartidorService,
     private pedidoSvc: PedidoService,
+    private calificacionSvc: CalificacionService,
     private fb: FormBuilder,
     private router: Router
   ) {}
@@ -78,6 +83,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
     this.cargarPerfil();
     this.cargarPedidos();
     this.cargarDisponibles();
+    this.cargarPromedio();
 
     this.intervaloPedidos = setInterval(() => {
     this.refrescarPedidos();
@@ -128,6 +134,16 @@ export class RepartidorHome implements OnInit, OnDestroy {
         this.guardando = false;
         this.errorMsg  = 'Error al guardar. Intenta de nuevo.';
       }
+    });
+  }
+
+  cargarPromedio() {
+    this.calificacionSvc.promedioMio().subscribe({
+      next: (data) => {
+        this.promedioCalificacion = data.promedio;
+        this.totalCalificaciones  = data.total;
+      },
+      error: () => {}
     });
   }
 
