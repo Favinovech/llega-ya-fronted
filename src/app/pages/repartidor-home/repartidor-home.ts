@@ -1,19 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RepartidorService } from '../../services/repartidor.service';
 import { PedidoService } from '../../services/pedido.service';
+import { Footer } from '../components/footer/footer';
 
 @Component({
   selector: 'app-repartidor-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, Footer],
   templateUrl: './repartidor-home.html',
   styleUrl: './repartidor-home.scss'
 })
-export class RepartidorHome implements OnInit {
+
+export class RepartidorHome implements OnInit, OnDestroy {
+  private intervaloPedidos: any;
   usuario: any = null;
   perfil: any  = null;
 
@@ -22,6 +25,10 @@ export class RepartidorHome implements OnInit {
   guardando     = false;
   errorMsg      = '';
   exitoMsg      = '';
+
+  pedidosDisponibles: any[] = [];
+  cargandoDisponibles = false;
+  tomandoId: number | null = null;
 
   tabActiva: 'entregas' | 'disponibles' = 'entregas';
   pedidos: any[] = [];
@@ -70,6 +77,16 @@ export class RepartidorHome implements OnInit {
     });
     this.cargarPerfil();
     this.cargarPedidos();
+    this.cargarDisponibles();
+
+    this.intervaloPedidos = setInterval(() => {
+    this.refrescarPedidos();
+    this.refrescarDisponibles();
+    }, 10000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervaloPedidos);
   }
 
   cargarPerfil() {
@@ -127,19 +144,55 @@ export class RepartidorHome implements OnInit {
     });
   }
 
-  actualizarEstado(id: number, estado: 'en_camino' | 'entregado') {
-    this.actualizandoId = id;
-    this.pedidoSvc.cambiarEstado(id, estado).subscribe({
+  cargarDisponibles() {
+    this.cargandoDisponibles = true;
+    this.repartidorSvc.getPedidosDisponibles().subscribe({
+      next: (data) => {
+        this.pedidosDisponibles = data;
+        this.cargandoDisponibles = false;
+      },
+      error: () => { this.cargandoDisponibles = false; }
+    });
+  }
+
+  tomarPedido(id: number) {
+    this.tomandoId = id;
+    this.pedidosDisponibles = this.pedidosDisponibles.filter((p: any) => p.id !== id);
+    this.repartidorSvc.tomarPedido(id).subscribe({
       next: () => {
-        this.actualizandoId = null;
-        this.cargarPedidos();
+        this.tomandoId = null;
+        this.refrescarPedidos();
+        this.tabActiva = 'entregas';
       },
       error: () => {
-        this.actualizandoId = null;
+        this.tomandoId = null;
+        this.refrescarDisponibles();
       }
     });
   }
 
+  private refrescarPedidos() {
+    this.pedidoSvc.listar().subscribe({
+      next: (data) => { this.pedidos = data; }
+    });
+  }
+
+  private refrescarDisponibles() {
+    this.repartidorSvc.getPedidosDisponibles().subscribe({
+     next: (data) => { this.pedidosDisponibles = data; }
+    });
+  }
+
+  actualizarEstado(id: number, estado: 'en_camino' | 'entregado') {
+    this.pedidos = this.pedidos.map((p: any) =>
+      p.id === id ? { ...p, estado } : p
+    );
+    this.pedidoSvc.cambiarEstado(id, estado).subscribe({
+      next: () => { this.refrescarPedidos(); },
+      error: () => { this.refrescarPedidos(); }
+    });
+  }
+  
   estadoLabel(estado: string): string {
     const map: Record<string, string> = {
       pendiente:  'Pendiente',

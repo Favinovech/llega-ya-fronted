@@ -143,7 +143,7 @@
         <button class="tab-btn" [class.active]="tabActiva === 'entregas'" (click)="tabActiva = 'entregas'">
           Mis entregas
         </button>
-        <button class="tab-btn" [class.active]="tabActiva === 'disponibles'" (click)="tabActiva = 'disponibles'">
+        <button class="tab-btn" [class.active]="tabActiva === 'disponibles'" (click)="tabActiva = 'disponibles'; cargarDisponibles()">
           Disponibles
         </button>
       </div>
@@ -187,12 +187,38 @@
       </div>
 
       <!-- Tab: Disponibles -->
-      <div *ngIf="tabActiva === 'disponibles'" class="disponibles-aviso">
-        <div class="aviso-icon">📋</div>
-        <p>Los pedidos disponibles te los asigna el administrador.</p>
-        <p>Revisa la pestaña <strong>Mis entregas</strong> para ver los pedidos asignados a ti.</p>
+      <div *ngIf="tabActiva === 'disponibles'">
+        <div *ngIf="cargandoDisponibles" class="loading-msg">Buscando pedidos...</div>
+
+        <div *ngIf="!cargandoDisponibles && pedidosDisponibles.length === 0" class="empty-state">
+          <div class="empty-icon">📋</div>
+          <p>No hay pedidos disponibles en tu zona ahora mismo.</p>
+          <p class="empty-hint">Zona: <strong>{{ zona || 'No definida' }}</strong></p>
+        </div>
+
+        <div class="pedido-card" *ngFor="let pedido of pedidosDisponibles">
+          <div class="pedido-header">
+            <span class="pedido-id">#{{ pedido.id }}</span>
+            <span class="pedido-estado estado-pendiente">Disponible</span>
+          </div>
+          <div class="pedido-info">
+            <p><strong>Dirección:</strong> {{ pedido.direccion_entrega }}</p>
+            <p><strong>Total:</strong> S/ {{ pedido.total }}</p>
+            <p *ngIf="pedido.negocio_info"><strong>Negocio:</strong> {{ pedido.negocio_info.nombre }}</p>
+          </div>
+          <div class="pedido-acciones">
+            <button class="btn-accion"
+                    [disabled]="tomandoId === pedido.id"
+                    (click)="tomarPedido(pedido.id)">
+              {{ tomandoId === pedido.id ? 'Aceptando...' : '✅ Aceptar pedido' }}
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
   </main>
+
 </div>
+
+<app-footer></app-footer>

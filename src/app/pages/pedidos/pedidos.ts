@@ -47,28 +47,31 @@ export class Pedidos implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.cargarLeaflet();
+  this.cargarLeaflet();
 
-    // Inicia polling cada 10 segundos
-    this.pedidoSvc.iniciarPolling(10000);
+  this.pedidoSvc.iniciarPolling(10000);
 
-    // Se suscribe al stream y detecta cambios
+  // Timeout de seguridad — si en 5s no cargó, quita el spinner igual
+  setTimeout(() => {
+    if (this.cargando) {
+      this.cargando = false;
+      this.cdr.detectChanges();
+    }
+  }, 5000);
+
     this.subs.add(
       this.pedidoSvc.pedidosStream.subscribe(pedidos => {
-        const erafff = this.cargando;
         this.detectarCambiosDeEstado(pedidos);
         this.pedidos = pedidos;
         this.cargando = false;
 
-        // Si hay un pedido seleccionado, refrescarlo
         if (this.pedidoSeleccionado) {
-          const refrescado = pedidos.find(p => p.id === this.pedidoSeleccionado!.id);
+         const refrescado = pedidos.find(p => p.id === this.pedidoSeleccionado!.id);
           if (refrescado) {
             this.pedidoSeleccionado = refrescado;
             this.actualizarMapa();
           }
-        }
-
+      }
         this.cdr.detectChanges();
       })
     );

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -46,25 +46,38 @@ export class MisPedidos implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.cargarPedidos();
-  }
+  this.cargarPedidos();
+
+  // Timeout de seguridad — si en 8s no cargó, quita el spinner
+  setTimeout(() => {
+    if (this.cargando) {
+      this.cargando = false;
+      this.errorMsg = 'La carga tardó demasiado. Intenta recargar.';
+    }
+  }, 8000);
+}
 
   cargarPedidos() {
-    this.http.get<Pedido[]>(`${this.api}/pedidos/`).subscribe({
-      next: (data) => {
-        this.pedidos  = data;
-        this.cargando = false;
-      },
-      error: () => {
-        this.errorMsg = 'No se pudieron cargar los pedidos.';
-        this.cargando = false;
-      }
-    });
-  }
+  this.cargando = true;
+  this.errorMsg = '';
+  this.http.get<Pedido[]>(`${this.api}/pedidos/`).subscribe({
+    next: (data) => {
+      this.pedidos  = data;
+      this.cargando = false;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.errorMsg = 'No se pudieron cargar los pedidos.';
+      this.cargando = false;
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   // Abre el modal
   abrirModalCancelacion(pedido: Pedido) {
@@ -76,8 +89,7 @@ export class MisPedidos implements OnInit {
   // Cierra el modal
   cerrarModal() {
     this.mostrarModal      = false;
-    this.pedidoAcancelar   = null;
-    this.motivoCancelacion = '';
+    this.cdr.detectChanges();
   }
 
   // Confirma la cancelación

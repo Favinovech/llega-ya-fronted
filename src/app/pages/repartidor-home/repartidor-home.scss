@@ -351,3 +351,204 @@ $bg:          #f9fafb;
   .welcome-hero { flex-direction: column; gap: 16px; padding: 24px 20px; }
   .main-content { padding: 20px 16px; }
 }
+
+/* ── Pedidos Section ── */
+.pedidos-section {
+  background: #fff;
+  border: 1.5px solid $border;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: $bg;
+  border: 1.5px solid $border;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 24px;
+
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: none;
+    background: none;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+    color: $gray;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all .18s;
+
+    &:hover { color: $dark; }
+    &.active {
+      background: $green;
+      color: #fff;
+    }
+  }
+}
+
+/* ── Empty state ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 56px 0;
+  color: $gray;
+  text-align: center;
+
+  .empty-icon { font-size: 2.5rem; opacity: .5; }
+
+  p { font-size: .95rem; margin: 0; }
+  .empty-hint { font-size: .82rem; color: #9ca3af; }
+}
+
+/* ── Loading ── */
+.loading-msg {
+  text-align: center;
+  padding: 40px 0;
+  font-size: .88rem;
+  color: $gray;
+}
+
+/* ── Pedido Card ── */
+.pedido-card {
+  border: 1.5px solid $border;
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+  transition: box-shadow .18s;
+
+  &:last-child { margin-bottom: 0; }
+  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+}
+
+.pedido-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pedido-id {
+  font-size: .85rem;
+  font-weight: 800;
+  color: $dark;
+  background: $bg;
+  border: 1.5px solid $border;
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+/* Estado badges */
+.pedido-estado {
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+
+  &.estado-pendiente  { background: #fef9c3; color: #a16207; }
+  &.estado-confirmado { background: #dbeafe; color: #1d4ed8; }
+  &.estado-en_camino  { background: #fef3c7; color: #d97706; }
+  &.estado-entregado  { background: #dcfce7; color: #16a34a; }
+  &.estado-cancelado  { background: #fee2e2; color: #dc2626; }
+  &.estado-completado { background: #f0fdf4; color: $green; }
+}
+
+/* Info del pedido */
+.pedido-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+
+  p {
+    font-size: .83rem;
+    color: $dark;
+    margin: 0;
+
+    strong {
+      color: $gray;
+      font-weight: 600;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      display: block;
+      margin-bottom: 2px;
+    }
+  }
+}
+
+/* Acciones */
+.pedido-acciones {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid $border;
+}
+
+.btn-accion {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1.5px solid #a7f3d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: $green;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all .18s;
+
+  &:hover:not(:disabled) {
+    background: $green;
+    color: #fff;
+    border-color: $green;
+  }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-entregar {
+  background: $green;
+  color: #fff;
+  border-color: $green;
+
+  &:hover:not(:disabled) {
+    background: #1b5e20;
+    border-color: #1b5e20;
+  }
+}
+
+/* ── Disponibles aviso (cuando no hay pedidos) ── */
+.disponibles-aviso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px 0;
+  text-align: center;
+  color: $gray;
+
+  .aviso-icon { font-size: 2.5rem; opacity: .45; }
+  p { font-size: .9rem; margin: 0; }
+  strong { color: $dark; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .pedido-info { grid-template-columns: 1fr; }
+  .tabs .tab-btn { font-size: .78rem; padding: 8px 8px; }
+}

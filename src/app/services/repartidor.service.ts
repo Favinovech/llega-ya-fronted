@@ -15,4 +15,12 @@ export class RepartidorService {
   actualizarPerfil(data: any) {
     return this.http.put<any>(`${this.api}/repartidor/perfil/`, data);
   }
+
+  getPedidosDisponibles() {
+  return this.http.get<any[]>(`${this.api}/pedidos/disponibles/`);
+  }
+
+  tomarPedido(id: number) {
+  return this.http.post<any>(`${this.api}/pedidos/${id}/tomar/`, {});
+  }
 }
