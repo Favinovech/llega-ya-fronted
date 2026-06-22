@@ -137,26 +137,60 @@
       </div>
     </section>
 
-    <!-- Próximamente -->
-    <section class="proximos">
-      <h2>Próximamente</h2>
-      <div class="proximos-grid">
-        <div class="proximo-card">
-          <div class="proximo-icon">📋</div>
-          <p>Ver pedidos disponibles</p>
+    <!-- Sección pedidos con tabs -->
+    <section class="pedidos-section">
+      <div class="tabs">
+        <button class="tab-btn" [class.active]="tabActiva === 'entregas'" (click)="tabActiva = 'entregas'">
+          Mis entregas
+        </button>
+        <button class="tab-btn" [class.active]="tabActiva === 'disponibles'" (click)="tabActiva = 'disponibles'">
+          Disponibles
+        </button>
+      </div>
+
+      <!-- Tab: Mis entregas -->
+      <div *ngIf="tabActiva === 'entregas'">
+        <div *ngIf="cargandoPedidos" class="loading-msg">Cargando pedidos...</div>
+
+        <div *ngIf="!cargandoPedidos && pedidos.length === 0" class="empty-state">
+          <div class="empty-icon">📦</div>
+          <p>No tienes pedidos asignados aún.</p>
+          <p class="empty-hint">El administrador te asignará pedidos cuando estés disponible.</p>
         </div>
-        <div class="proximo-card">
-          <div class="proximo-icon">🗺️</div>
-          <p>Mapa de entregas</p>
+
+        <div class="pedido-card" *ngFor="let pedido of pedidos">
+          <div class="pedido-header">
+            <span class="pedido-id">#{{ pedido.id }}</span>
+            <span class="pedido-estado estado-{{ pedido.estado }}">{{ estadoLabel(pedido.estado) }}</span>
+          </div>
+          <div class="pedido-info">
+            <p><strong>Dirección:</strong> {{ pedido.direccion_entrega }}</p>
+            <p><strong>Total:</strong> S/ {{ pedido.total }}</p>
+            <p *ngIf="pedido.negocio?.nombre"><strong>Negocio:</strong> {{ pedido.negocio.nombre }}</p>
+            <p *ngIf="pedido.cliente"><strong>Cliente:</strong> {{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</p>
+          </div>
+          <div class="pedido-acciones" *ngIf="pedido.estado === 'confirmado' || pedido.estado === 'en_camino'">
+            <button class="btn-accion"
+                    *ngIf="pedido.estado === 'confirmado'"
+                    [disabled]="actualizandoId === pedido.id"
+                    (click)="actualizarEstado(pedido.id, 'en_camino')">
+              {{ actualizandoId === pedido.id ? 'Actualizando...' : 'Salir a entregar' }}
+            </button>
+            <button class="btn-accion btn-entregar"
+                    *ngIf="pedido.estado === 'en_camino'"
+                    [disabled]="actualizandoId === pedido.id"
+                    (click)="actualizarEstado(pedido.id, 'entregado')">
+              {{ actualizandoId === pedido.id ? 'Actualizando...' : 'Marcar entregado' }}
+            </button>
+          </div>
         </div>
-        <div class="proximo-card">
-          <div class="proximo-icon">💰</div>
-          <p>Mis ganancias</p>
-        </div>
-        <div class="proximo-card">
-          <div class="proximo-icon">📊</div>
-          <p>Historial de rutas</p>
-        </div>
+      </div>
+
+      <!-- Tab: Disponibles -->
+      <div *ngIf="tabActiva === 'disponibles'" class="disponibles-aviso">
+        <div class="aviso-icon">📋</div>
+        <p>Los pedidos disponibles te los asigna el administrador.</p>
+        <p>Revisa la pestaña <strong>Mis entregas</strong> para ver los pedidos asignados a ti.</p>
       </div>
     </section>
 

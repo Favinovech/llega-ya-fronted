@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RepartidorService } from '../../services/repartidor.service';
+import { PedidoService } from '../../services/pedido.service';
 
 @Component({
   selector: 'app-repartidor-home',
@@ -21,6 +22,11 @@ export class RepartidorHome implements OnInit {
   guardando     = false;
   errorMsg      = '';
   exitoMsg      = '';
+
+  tabActiva: 'entregas' | 'disponibles' = 'entregas';
+  pedidos: any[] = [];
+  cargandoPedidos = false;
+  actualizandoId: number | null = null;
 
   perfilForm!: FormGroup;
 
@@ -50,6 +56,7 @@ export class RepartidorHome implements OnInit {
   constructor(
     private auth: AuthService,
     private repartidorSvc: RepartidorService,
+    private pedidoSvc: PedidoService,
     private fb: FormBuilder,
     private router: Router
   ) {}
@@ -62,6 +69,7 @@ export class RepartidorHome implements OnInit {
       zona_cobertura: [''],
     });
     this.cargarPerfil();
+    this.cargarPedidos();
   }
 
   cargarPerfil() {
@@ -104,6 +112,44 @@ export class RepartidorHome implements OnInit {
         this.errorMsg  = 'Error al guardar. Intenta de nuevo.';
       }
     });
+  }
+
+  cargarPedidos() {
+    this.cargandoPedidos = true;
+    this.pedidoSvc.listar().subscribe({
+      next: (data) => {
+        this.pedidos = data;
+        this.cargandoPedidos = false;
+      },
+      error: () => {
+        this.cargandoPedidos = false;
+      }
+    });
+  }
+
+  actualizarEstado(id: number, estado: 'en_camino' | 'entregado') {
+    this.actualizandoId = id;
+    this.pedidoSvc.cambiarEstado(id, estado).subscribe({
+      next: () => {
+        this.actualizandoId = null;
+        this.cargarPedidos();
+      },
+      error: () => {
+        this.actualizandoId = null;
+      }
+    });
+  }
+
+  estadoLabel(estado: string): string {
+    const map: Record<string, string> = {
+      pendiente:  'Pendiente',
+      confirmado: 'Confirmado',
+      en_camino:  'En camino',
+      entregado:  'Entregado',
+      cancelado:  'Cancelado',
+      completado: 'Completado',
+    };
+    return map[estado] ?? estado;
   }
 
   salir() {

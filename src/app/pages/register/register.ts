@@ -56,31 +56,49 @@ export class Register {
     this.cargando = true;
     this.errorMessage = '';
 
-    const payload: any = {
-      nombre:     this.form.value.nombre,
-      apellido:   this.form.value.apellido,
-      email:      this.form.value.email,
-      telefono:   this.form.value.telefono,
-      password:   this.form.value.password,
-      rol_nombre: this.tipoSeleccionado,
-    };
-
     if (this.tipoSeleccionado === 'repartidor') {
-      payload.dni            = this.form.value.dni;
-      payload.vehiculo       = this.form.value.vehiculo;
-      payload.zona_cobertura = this.form.value.zona_cobertura;
+      const payload = {
+        nombres:        this.form.value.nombre,
+        apellidos:      this.form.value.apellido,
+        email:          this.form.value.email,
+        celular:        this.form.value.telefono || '',
+        dni:            this.form.value.dni || '',
+        vehiculo:       this.form.value.vehiculo,
+        zona_cobertura: this.form.value.zona_cobertura || '',
+        password:       this.form.value.password,
+      };
+      this.auth.registerRepartidor(payload).subscribe({
+        next: () => {
+          this.cargando = false;
+          this.exitoMessage = 'Repartidor registrado correctamente';
+          setTimeout(() => this.router.navigate(['/login']), 1500);
+        },
+        error: (err: any) => {
+          this.cargando = false;
+          this.errorMessage =
+            err.error?.email?.[0] ?? err.error?.detail ?? 'Error al registrar. Intenta de nuevo.';
+        }
+      });
+    } else {
+      const payload = {
+        nombre:     this.form.value.nombre,
+        apellido:   this.form.value.apellido,
+        email:      this.form.value.email,
+        telefono:   this.form.value.telefono,
+        password:   this.form.value.password,
+        rol_nombre: 'cliente',
+      };
+      this.auth.register(payload).subscribe({
+        next: () => {
+          this.cargando = false;
+          this.exitoMessage = '¡Cuenta creada! Redirigiendo al inicio de sesión...';
+          setTimeout(() => this.router.navigate(['/login']), 1500);
+        },
+        error: (err: any) => {
+          this.cargando = false;
+          this.errorMessage = err.error?.email?.[0] ?? 'Error al registrar. Intenta de nuevo.';
+        }
+      });
     }
-
-    this.auth.register(payload).subscribe({
-      next: () => {
-        this.cargando = false;
-        this.exitoMessage = '¡Cuenta creada! Redirigiendo al inicio de sesión...';
-        setTimeout(() => this.router.navigate(['/login']), 1500);
-      },
-      error: (err: any) => {
-        this.cargando = false;
-        this.errorMessage = err.error?.email?.[0] ?? 'Error al registrar. Intenta de nuevo.';
-      }
-    });
   }
 }

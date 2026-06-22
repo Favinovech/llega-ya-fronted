@@ -24,6 +24,10 @@ export class AuthService {
     return this.http.post<any>(`${this.api}/register/`, data);
   }
 
+  registerRepartidor(data: any) {
+    return this.http.post<any>(`${this.api}/repartidor/register/`, data);
+  }
+
   logout() {
     const refresh = localStorage.getItem('refresh');
     this.http.post(`${this.api}/logout/`, { refresh }).subscribe();
