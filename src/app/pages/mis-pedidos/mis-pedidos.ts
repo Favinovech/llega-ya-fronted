@@ -125,7 +125,6 @@ export class MisPedidos implements OnInit {
 
   puedeCalificar(pedido: Pedido): boolean {
     return (pedido.estado === 'entregado' || pedido.estado === 'completado')
-      && !!pedido.repartidor
       && !pedido.calificacion;
   }
 
