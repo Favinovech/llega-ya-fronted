@@ -99,6 +99,13 @@ $error:      #d32f2f;
   }
 }
 
+.left-illustration {
+  z-index: 1;
+  margin-top: 16px;
+  width: 100%;
+  svg { width: 100%; height: auto; display: block; }
+}
+
 // ── Lado derecho ─────────────────────────────────────────
 .right {
   width: 480px;

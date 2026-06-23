@@ -32,6 +32,7 @@
     </div>
 
     <div class="hero-visual">
+      <!-- Tarjeta flotante superior -->
       <div class="visual-card card-a">
         <div class="vc-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -44,20 +45,85 @@
         </div>
       </div>
 
+      <!-- Ilustración principal — app de pedidos en teléfono -->
       <div class="visual-main">
-        <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="100" fill="#e8f5e9"/>
-          <rect x="55" y="70" width="90" height="75" rx="8" fill="white" stroke="#c8e6c9" stroke-width="1.5"/>
-          <rect x="68" y="85" width="30" height="4" rx="2" fill="#2e7d32"/>
-          <rect x="68" y="94" width="50" height="3" rx="1.5" fill="#c8e6c9"/>
-          <rect x="68" y="102" width="40" height="3" rx="1.5" fill="#c8e6c9"/>
-          <rect x="68" y="118" width="64" height="16" rx="8" fill="#2e7d32"/>
-          <rect x="82" y="124" width="36" height="4" rx="2" fill="white"/>
-          <circle cx="140" cy="60" r="18" fill="#2e7d32"/>
-          <path d="M133 60 L138 65 L148 55" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sombra del teléfono -->
+          <ellipse cx="120" cy="310" rx="60" ry="8" fill="rgba(0,0,0,0.08)"/>
+          <!-- Cuerpo del teléfono -->
+          <rect x="40" y="8" width="160" height="295" rx="24" fill="white" stroke="#d1fae5" stroke-width="2"/>
+          <!-- Notch -->
+          <rect x="88" y="16" width="64" height="12" rx="6" fill="#e8f5e9"/>
+          <!-- Barra de app (header verde) -->
+          <rect x="40" y="38" width="160" height="52" fill="#2e7d32"/>
+          <rect x="55" y="52" width="70" height="7" rx="3.5" fill="rgba(255,255,255,0.85)"/>
+          <rect x="55" y="64" width="45" height="5" rx="2.5" fill="rgba(255,255,255,0.45)"/>
+          <!-- Barra de búsqueda -->
+          <rect x="55" y="103" width="130" height="28" rx="14" fill="#f0fdf4" stroke="#c8e6c9" stroke-width="1.5"/>
+          <circle cx="72" cy="117" r="6" fill="none" stroke="#9ca3af" stroke-width="1.5"/>
+          <line x1="76" y1="121" x2="79" y2="124" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="84" y="113" width="60" height="5" rx="2.5" fill="#d1d5db"/>
+          <!-- Tarjeta producto 1 (pizza) -->
+          <rect x="55" y="144" width="130" height="55" rx="12" fill="#fff8f1" stroke="#ffe0b2" stroke-width="1"/>
+          <!-- Imagen pizza (círculo rojo-naranja) -->
+          <circle cx="80" cy="171" r="19" fill="#ff7043"/>
+          <circle cx="80" cy="171" r="13" fill="#ffa726"/>
+          <circle cx="75" cy="167" r="3" fill="#ef5350"/>
+          <circle cx="83" cy="173" r="3" fill="#ef5350"/>
+          <circle cx="77" cy="177" r="3" fill="#ef5350"/>
+          <line x1="80" y1="152" x2="80" y2="190" stroke="#ff7043" stroke-width="1" opacity="0.5"/>
+          <line x1="61" y1="171" x2="99" y2="171" stroke="#ff7043" stroke-width="1" opacity="0.5"/>
+          <!-- Info producto 1 -->
+          <rect x="107" y="150" width="65" height="6" rx="3" fill="#374151"/>
+          <rect x="107" y="161" width="45" height="5" rx="2.5" fill="#9ca3af"/>
+          <rect x="107" y="180" width="38" height="8" rx="4" fill="#2e7d32"/>
+          <rect x="114" y="183" width="24" height="3" rx="1.5" fill="white"/>
+          <!-- Tarjeta producto 2 (hamburguesa) -->
+          <rect x="55" y="210" width="130" height="55" rx="12" fill="#f0fff4" stroke="#bbf7d0" stroke-width="1"/>
+          <!-- Imagen burger (capas) -->
+          <ellipse cx="80" cy="225" rx="17" ry="7" fill="#8d6e63"/>
+          <ellipse cx="80" cy="229" rx="14" ry="5" fill="#ffa726"/>
+          <ellipse cx="80" cy="233" rx="12" ry="4" fill="#66bb6a"/>
+          <ellipse cx="80" cy="237" rx="16" ry="7" fill="#8d6e63"/>
+          <!-- Semillas sesamo -->
+          <ellipse cx="75" cy="222" rx="2" ry="1" fill="#fff9c4"/>
+          <ellipse cx="82" cy="220" rx="2" ry="1" fill="#fff9c4"/>
+          <ellipse cx="79" cy="224" rx="1.5" ry="1" fill="#fff9c4"/>
+          <!-- Info producto 2 -->
+          <rect x="107" y="217" width="60" height="6" rx="3" fill="#374151"/>
+          <rect x="107" y="228" width="40" height="5" rx="2.5" fill="#9ca3af"/>
+          <rect x="107" y="246" width="38" height="8" rx="4" fill="#2e7d32"/>
+          <rect x="114" y="249" width="24" height="3" rx="1.5" fill="white"/>
+          <!-- Botón confirmar pedido -->
+          <rect x="55" y="277" width="130" height="18" rx="9" fill="#2e7d32"/>
+          <rect x="80" y="282" width="80" height="5" rx="2.5" fill="rgba(255,255,255,0.9)"/>
+
+          <!-- Badge flotante: calificación -->
+          <rect x="168" y="90" width="58" height="34" rx="10" fill="white" stroke="#e5e7eb" stroke-width="1.5"/>
+          <rect x="175" y="98" width="10" height="10" rx="2" fill="#fbbf24"/>
+          <rect x="175" y="97" width="5" height="5" rx="1" fill="#f59e0b"/>
+          <polygon points="180,94 181.5,97 185,97.5 182.5,100 183,103.5 180,101.8 177,103.5 177.5,100 175,97.5 178.5,97" fill="#f59e0b"/>
+          <rect x="189" y="98" width="30" height="5" rx="2.5" fill="#374151"/>
+          <rect x="189" y="107" width="22" height="4" rx="2" fill="#9ca3af"/>
+
+          <!-- Badge flotante: tiempo de entrega -->
+          <rect x="8" y="200" width="62" height="36" rx="10" fill="white" stroke="#e5e7eb" stroke-width="1.5"/>
+          <circle cx="28" cy="218" r="9" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+          <!-- Manecillas reloj -->
+          <line x1="28" y1="218" x2="28" y2="213" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="28" y1="218" x2="32" y2="220" stroke="#2e7d32" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="41" y="211" width="22" height="5" rx="2.5" fill="#374151"/>
+          <rect x="41" y="220" width="15" height="4" rx="2" fill="#9ca3af"/>
+
+          <!-- Decoración: puntos flotantes -->
+          <circle cx="20" cy="80" r="4" fill="#a5d6a7" opacity="0.6"/>
+          <circle cx="215" cy="160" r="3" fill="#c8e6c9" opacity="0.7"/>
+          <circle cx="210" cy="250" r="5" fill="#a5d6a7" opacity="0.5"/>
+          <circle cx="30" cy="290" r="3" fill="#c8e6c9" opacity="0.6"/>
         </svg>
       </div>
 
+      <!-- Tarjeta flotante inferior -->
       <div class="visual-card card-b">
         <div class="vc-dot"></div>
         <div>
@@ -72,10 +138,12 @@
 <!-- ── ESTADÍSTICAS ───────────────────────────────── -->
 <div class="stats-bar">
   <div class="stats-inner">
-    <div class="stat-item" *ngFor="let s of estadisticas">
-      <strong>{{ s.valor }}</strong>
-      <span>{{ s.label }}</span>
-    </div>
+    @for (s of estadisticas; track s.valor) {
+      <div class="stat-item">
+        <strong>{{ s.valor }}</strong>
+        <span>{{ s.label }}</span>
+      </div>
+    }
   </div>
 </div>
 
@@ -86,11 +154,16 @@
     <h2 class="section-title">Un marketplace completo<br>para tu barrio</h2>
 
     <div class="cat-grid">
-      <div class="cat-card" *ngFor="let c of categorias">
-        <div class="cat-card-icon" [innerHTML]="c.svg"></div>
-        <strong>{{ c.nombre }}</strong>
-        <p>{{ c.descripcion }}</p>
-      </div>
+      @for (c of categorias; track c.nombre) {
+        <div class="cat-card">
+          <div class="cat-card-img" [style.background]="c.color">
+            <span class="cat-emoji">{{ c.emoji }}</span>
+          </div>
+          <div class="cat-card-icon" [innerHTML]="c.svg"></div>
+          <strong>{{ c.nombre }}</strong>
+          <p>{{ c.descripcion }}</p>
+        </div>
+      }
     </div>
   </div>
 </section>
@@ -102,12 +175,16 @@
     <h2 class="section-title light">Cuatro pasos,<br>un solo clic</h2>
 
     <div class="pasos-grid">
-      <div class="paso" *ngFor="let p of pasos">
-        <div class="paso-num">{{ p.num }}</div>
-        <div class="paso-icon" [innerHTML]="p.svg"></div>
-        <strong>{{ p.titulo }}</strong>
-        <p>{{ p.descripcion }}</p>
-      </div>
+      @for (p of pasos; track p.num) {
+        <div class="paso">
+          <div class="paso-num">{{ p.num }}</div>
+          <div class="paso-icon-wrap">
+            <div class="paso-icon" [innerHTML]="p.svg"></div>
+          </div>
+          <strong>{{ p.titulo }}</strong>
+          <p>{{ p.descripcion }}</p>
+        </div>
+      }
     </div>
   </div>
 </section>

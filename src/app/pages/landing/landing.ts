@@ -14,6 +14,8 @@ export class Landing {
     {
       nombre: 'Restaurantes',
       descripcion: 'Menús del día, a la carta y pollerías',
+      emoji: '🍽️',
+      color: 'linear-gradient(135deg,#ff6b35 0%,#f7c59f 100%)',
       svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>
       </svg>`
@@ -21,6 +23,8 @@ export class Landing {
     {
       nombre: 'Farmacias',
       descripcion: 'Medicamentos genéricos y de marca',
+      emoji: '💊',
+      color: 'linear-gradient(135deg,#56ab2f 0%,#a8e063 100%)',
       svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 0 1-2 2z"/><path d="M19 3H5a2 2 0 0 0-2 2v3h18V5a2 2 0 0 0-2-2z"/><path d="M2 12h20"/><path d="M12 12v9"/>
       </svg>`
@@ -28,6 +32,8 @@ export class Landing {
     {
       nombre: 'Bodegas',
       descripcion: 'Abarrotes, bebidas y snacks',
+      emoji: '🏪',
+      color: 'linear-gradient(135deg,#f7971e 0%,#ffd200 100%)',
       svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
       </svg>`
@@ -35,6 +41,8 @@ export class Landing {
     {
       nombre: 'Mercados',
       descripcion: 'Frutas, verduras y productos frescos',
+      emoji: '🥦',
+      color: 'linear-gradient(135deg,#11998e 0%,#38ef7d 100%)',
       svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
       </svg>`
@@ -42,6 +50,8 @@ export class Landing {
     {
       nombre: 'Postres',
       descripcion: 'Tortas, pasteles y dulces artesanales',
+      emoji: '🍰',
+      color: 'linear-gradient(135deg,#f953c6 0%,#b91d73 100%)',
       svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2 1 2 1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h0.01"/><path d="M12 4h0.01"/><path d="M17 4h0.01"/>
       </svg>`
