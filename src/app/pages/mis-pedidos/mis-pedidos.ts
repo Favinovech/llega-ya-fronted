@@ -204,11 +204,30 @@ export class MisPedidos implements OnInit {
   // ── Modal pago ───────────────────────────────────
 
   abrirModalPago(pedido: Pedido) {
-    this.pedidoAPagar     = pedido;
-    this.metodoPago       = 'tarjeta';
-    this.pagando          = false;
-    this.pagoExitoso      = null;
-    this.mostrarModalPago = true;
+    this.http.get<any>(`${this.api}/pedidos/${pedido.id}/detalle/`).subscribe({
+      next: (detalle) => {
+        if (detalle.pago) {
+          const idx = this.pedidos.findIndex(p => p.id === pedido.id);
+          if (idx !== -1) this.pedidos[idx] = { ...this.pedidos[idx], pago: detalle.pago };
+          this.cdr.detectChanges();
+          this.toast.mostrarError('Este pedido ya fue pagado.');
+          return;
+        }
+        this.pedidoAPagar     = pedido;
+        this.metodoPago       = 'tarjeta';
+        this.pagando          = false;
+        this.pagoExitoso      = null;
+        this.mostrarModalPago = true;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.pedidoAPagar     = pedido;
+        this.metodoPago       = 'tarjeta';
+        this.pagando          = false;
+        this.pagoExitoso      = null;
+        this.mostrarModalPago = true;
+      }
+    });
   }
 
   cerrarModalPago() {
@@ -233,8 +252,19 @@ export class MisPedidos implements OnInit {
       },
       error: (err: any) => {
         this.pagando = false;
-        this.toast.mostrarError(err.error?.error ?? 'No se pudo procesar el pago.');
-        this.cdr.detectChanges();
+        if (err.status === 400 && err.error?.error?.includes('ya fue pagado')) {
+          this.http.get<any>(`${this.api}/pedidos/${this.pedidoAPagar!.id}/detalle/`).subscribe({
+            next: (detalle) => {
+              const idx = this.pedidos.findIndex(p => p.id === this.pedidoAPagar!.id);
+              if (idx !== -1) this.pedidos[idx] = { ...this.pedidos[idx], pago: detalle.pago };
+              this.pagoExitoso = detalle.pago;
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          this.toast.mostrarError(err.error?.error ?? 'No se pudo procesar el pago.');
+          this.cdr.detectChanges();
+        }
       }
     });
   }
