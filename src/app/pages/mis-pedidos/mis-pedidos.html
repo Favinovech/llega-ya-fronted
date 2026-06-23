@@ -86,6 +86,32 @@
               </div>
             }
 
+            <!-- Pagar (solo pendiente y sin pago) -->
+            @if (pedido.estado === 'pendiente' && !pedido.pago) {
+              <div class="pedido-footer pedido-footer-pago">
+                <div class="pago-prompt">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                       stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                    <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                  </svg>
+                  <span>Pago pendiente</span>
+                </div>
+                <button class="btn-pagar" (click)="abrirModalPago(pedido)">Ver detalle / Pagar</button>
+              </div>
+            }
+
+            <!-- Pago ya registrado -->
+            @if (pedido.pago) {
+              <div class="pago-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" width="13" height="13">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Pagado · {{ pedido.pago.metodo | titlecase }}
+                <span class="pago-num">· #{{ pedido.pago.numero_transaccion | slice:0:8 }}…</span>
+              </div>
+            }
+
             <!-- Info cancelado -->
             @if (pedido.estado === 'cancelado') {
               <div class="cancelado-info">
@@ -157,6 +183,151 @@
         <button class="btn-ghost" (click)="cerrarModal()">No, mantener</button>
         <button class="btn-danger" (click)="confirmarCancelacion()">Sí, cancelar pedido</button>
       </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL PAGO -->
+@if (mostrarModalPago) {
+  <div class="modal-backdrop" (click)="cerrarModalPago()">
+    <div class="modal modal-pago" (click)="$event.stopPropagation()">
+
+      @if (!pagoExitoso) {
+        <div class="modal-head">
+          <h3>Pagar pedido #{{ pedidoAPagar?.id }}</h3>
+          <button class="modal-close" (click)="cerrarModalPago()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="pago-resumen">
+            @for (d of pedidoAPagar?.detalles; track d.id) {
+              <div class="pago-resumen-row">
+                <span>Producto #{{ d.producto }} × {{ d.cantidad }}</span>
+                <span>S/ {{ d.precio_unitario }}</span>
+              </div>
+            }
+            <div class="pago-resumen-total">
+              <span>Total a pagar</span>
+              <strong>S/ {{ pedidoAPagar?.total }}</strong>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Método de pago</label>
+            <div class="metodo-selector">
+              <button type="button" [class.active]="metodoPago === 'tarjeta'"
+                      (click)="metodoPago = 'tarjeta'">💳 Tarjeta</button>
+              <button type="button" [class.active]="metodoPago === 'yape'"
+                      (click)="metodoPago = 'yape'">📱 Yape</button>
+              <button type="button" [class.active]="metodoPago === 'plin'"
+                      (click)="metodoPago = 'plin'">📱 Plin</button>
+            </div>
+          </div>
+
+          @if (metodoPago === 'tarjeta') {
+            <div class="campo-tarjeta">
+              <div class="field">
+                <label>Número de tarjeta</label>
+                <input type="text" placeholder="1234 5678 9012 3456" maxlength="19"/>
+              </div>
+              <div class="tarjeta-row">
+                <div class="field">
+                  <label>Vencimiento</label>
+                  <input type="text" placeholder="MM/AA" maxlength="5"/>
+                </div>
+                <div class="field">
+                  <label>CVV</label>
+                  <input type="text" placeholder="123" maxlength="3"/>
+                </div>
+              </div>
+              <div class="field">
+                <label>Nombre en la tarjeta</label>
+                <input type="text" placeholder="Como aparece en la tarjeta"/>
+              </div>
+            </div>
+          }
+
+          @if (metodoPago === 'yape' || metodoPago === 'plin') {
+            <div class="qr-simulado">
+              <div class="qr-box">
+                <svg viewBox="0 0 100 100" width="120" height="120">
+                  <rect x="10" y="10" width="30" height="30" rx="3" fill="none" stroke="#111" stroke-width="4"/>
+                  <rect x="17" y="17" width="16" height="16" rx="2" fill="#111"/>
+                  <rect x="60" y="10" width="30" height="30" rx="3" fill="none" stroke="#111" stroke-width="4"/>
+                  <rect x="67" y="17" width="16" height="16" rx="2" fill="#111"/>
+                  <rect x="10" y="60" width="30" height="30" rx="3" fill="none" stroke="#111" stroke-width="4"/>
+                  <rect x="17" y="67" width="16" height="16" rx="2" fill="#111"/>
+                  <rect x="60" y="56" width="8" height="8" fill="#111"/>
+                  <rect x="72" y="56" width="8" height="8" fill="#111"/>
+                  <rect x="84" y="56" width="8" height="8" fill="#111"/>
+                  <rect x="60" y="68" width="8" height="8" fill="#111"/>
+                  <rect x="72" y="68" width="20" height="8" fill="#111"/>
+                  <rect x="60" y="80" width="8" height="12" fill="#111"/>
+                  <rect x="76" y="80" width="16" height="12" fill="#111"/>
+                </svg>
+              </div>
+              <p>Escanea con <strong>{{ metodoPago === 'yape' ? 'Yape' : 'Plin' }}</strong> para confirmar</p>
+              <p class="qr-monto">S/ {{ pedidoAPagar?.total }}</p>
+            </div>
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-ghost" (click)="cerrarModalPago()">Cancelar</button>
+          <button class="btn-pagar-confirm" (click)="confirmarPago()" [disabled]="pagando">
+            {{ pagando ? 'Procesando...' : 'Confirmar pago' }}
+          </button>
+        </div>
+      }
+
+      @if (pagoExitoso) {
+        <div class="modal-head">
+          <h3>¡Pago confirmado!</h3>
+          <button class="modal-close" (click)="cerrarModalPago()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body comprobante-body">
+          <div class="comprobante-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round" width="40" height="40">
+              <circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <p class="comprobante-titulo">Pago procesado correctamente</p>
+          <div class="comprobante-detalle">
+            <div class="comp-row">
+              <span>Pedido</span><strong>#{{ pedidoAPagar?.id }}</strong>
+            </div>
+            <div class="comp-row">
+              <span>Monto</span><strong>S/ {{ pagoExitoso.monto }}</strong>
+            </div>
+            <div class="comp-row">
+              <span>Método</span><strong>{{ pagoExitoso.metodo | titlecase }}</strong>
+            </div>
+            <div class="comp-row">
+              <span>N° Transacción</span>
+              <strong class="transaccion-num">{{ pagoExitoso.numero_transaccion }}</strong>
+            </div>
+            <div class="comp-row">
+              <span>Fecha</span>
+              <strong>{{ pagoExitoso.fecha | date:'dd/MM/yyyy HH:mm' }}</strong>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-primary-btn" (click)="cerrarModalPago()">Cerrar</button>
+        </div>
+      }
+
     </div>
   </div>
 }

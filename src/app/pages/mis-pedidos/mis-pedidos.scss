@@ -185,6 +185,100 @@ $font:'Inter','Segoe UI',system-ui,sans-serif;
   &:disabled { opacity:.5; cursor:not-allowed; }
 }
 
+// ── Pago ──────────────────────────────────────────
+.pedido-footer-pago {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:#eff6ff; border-top:1px solid #bfdbfe; flex-wrap:wrap;
+}
+.pago-prompt {
+  display:flex; align-items:center; gap:6px; font-size:.82rem; color:#1e40af;
+  svg { stroke:#3b82f6; flex-shrink:0; }
+}
+.btn-pagar {
+  background:#2563eb; color:white; border:none; padding:8px 18px; border-radius:8px;
+  font-size:.83rem; font-weight:700; cursor:pointer; font-family:$font; transition:background .18s;
+  white-space:nowrap;
+  &:hover { background:#1d4ed8; }
+}
+.pago-badge {
+  display:flex; align-items:center; gap:5px; padding:9px 20px;
+  font-size:.8rem; font-weight:600; color:$verde2;
+  background:$pale; border-top:1px solid #bbf7d0;
+  svg { stroke:$verde; flex-shrink:0; }
+  .pago-num { color:$gris; font-weight:400; font-family:monospace; }
+}
+
+// ── Modal pago ─────────────────────────────────────
+.modal-pago { max-width:500px; }
+
+.pago-resumen {
+  background:#f8fafc; border:1.5px solid $border; border-radius:10px;
+  padding:14px 16px; margin-bottom:20px; display:flex; flex-direction:column; gap:8px;
+}
+.pago-resumen-row {
+  display:flex; justify-content:space-between; font-size:.84rem; color:$gris;
+}
+.pago-resumen-total {
+  display:flex; justify-content:space-between; align-items:center; padding-top:10px;
+  border-top:1.5px solid $border; font-size:.95rem; color:$negro;
+  strong { color:$verde; font-size:1.05rem; }
+}
+.metodo-selector {
+  display:flex; gap:8px; margin-top:4px;
+  button {
+    flex:1; padding:10px 8px; border:1.5px solid $border; border-radius:10px;
+    background:white; font-size:.85rem; font-weight:600; cursor:pointer;
+    font-family:$font; transition:all .18s; color:$negro;
+    &:hover { border-color:#93c5fd; }
+    &.active { border-color:#2563eb; background:#eff6ff; color:#1d4ed8; }
+  }
+}
+.campo-tarjeta {
+  margin-top:16px; display:flex; flex-direction:column; gap:12px;
+  input {
+    width:100%; padding:10px 12px; border:1.5px solid $border; border-radius:8px;
+    outline:none; font-size:.88rem; font-family:$font; color:$negro;
+    &:focus { border-color:#2563eb; }
+  }
+}
+.tarjeta-row { display:flex; gap:12px; }
+.qr-simulado {
+  margin-top:16px; display:flex; flex-direction:column; align-items:center; gap:10px;
+  .qr-box {
+    background:white; border:1.5px solid $border; border-radius:12px;
+    padding:16px; display:flex; align-items:center; justify-content:center;
+  }
+  p { font-size:.85rem; color:$gris; text-align:center; margin:0; }
+  .qr-monto { font-size:1.3rem; font-weight:900; color:$negro; }
+}
+.btn-pagar-confirm {
+  background:#2563eb; color:white; border:none; padding:10px 22px; border-radius:8px;
+  font-size:.88rem; font-weight:700; cursor:pointer; font-family:$font; transition:background .18s;
+  &:hover:not(:disabled) { background:#1d4ed8; }
+  &:disabled { opacity:.5; cursor:not-allowed; }
+}
+.comprobante-body { text-align:center; }
+.comprobante-icon {
+  width:72px; height:72px; background:$pale; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+}
+.comprobante-titulo { font-size:1rem; font-weight:700; color:$negro; margin-bottom:20px !important; }
+.comprobante-detalle {
+  background:#f8fafc; border:1.5px solid $border; border-radius:10px;
+  padding:14px 16px; text-align:left; display:flex; flex-direction:column; gap:10px;
+}
+.comp-row {
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:.85rem; color:$gris;
+  strong { color:$negro; font-weight:700; }
+  .transaccion-num { font-family:monospace; font-size:.75rem; color:$verde2; word-break:break-all; text-align:right; max-width:60%; }
+}
+.btn-primary-btn {
+  background:$verde; color:white; border:none; padding:10px 22px; border-radius:8px;
+  font-size:.88rem; font-weight:700; cursor:pointer; font-family:$font; transition:background .18s;
+  &:hover { background:$verde2; }
+}
+
 @media (max-width:600px) {
   .page-hero { padding:40px 20px; }
   .page-body { padding:24px 16px; }

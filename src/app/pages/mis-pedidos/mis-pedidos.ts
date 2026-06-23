@@ -11,6 +11,15 @@ import { ToastService } from '../../services/toast';
 import { CalificacionService, Calificacion } from '../../services/calificacion.service';
 import { environment } from '../../../environments/environment';
 
+interface Pago {
+  id: number;
+  pedido: number;
+  monto: string;
+  metodo: string;
+  numero_transaccion: string;
+  fecha: string;
+}
+
 interface DetallePedido {
   id: number;
   producto: number;
@@ -29,6 +38,7 @@ interface Pedido {
   detalles: DetallePedido[];
   motivo_cancelacion?: string | null;
   calificacion?: Calificacion | null;
+  pago?: Pago | null;
 }
 
 @Component({
@@ -58,6 +68,13 @@ export class MisPedidos implements OnInit {
   comentarioCalificacion    = '';
   enviandoCalificacion      = false;
   readonly estrellas        = [1, 2, 3, 4, 5];
+
+  // Modal pago
+  mostrarModalPago  = false;
+  pedidoAPagar: Pedido | null = null;
+  metodoPago        = 'tarjeta';
+  pagando           = false;
+  pagoExitoso: Pago | null = null;
 
   constructor(
     private http: HttpClient,
@@ -180,6 +197,44 @@ export class MisPedidos implements OnInit {
       error: (err: any) => {
         this.enviandoCalificacion = false;
         this.toast.mostrarError(err.error?.error ?? 'No se pudo enviar la calificación.');
+      }
+    });
+  }
+
+  // ── Modal pago ───────────────────────────────────
+
+  abrirModalPago(pedido: Pedido) {
+    this.pedidoAPagar     = pedido;
+    this.metodoPago       = 'tarjeta';
+    this.pagando          = false;
+    this.pagoExitoso      = null;
+    this.mostrarModalPago = true;
+  }
+
+  cerrarModalPago() {
+    this.mostrarModalPago = false;
+    this.pagoExitoso      = null;
+    this.cdr.detectChanges();
+  }
+
+  confirmarPago() {
+    if (!this.pedidoAPagar || this.pagando) return;
+    this.pagando = true;
+
+    this.http.post<any>(`${this.api}/pedidos/${this.pedidoAPagar.id}/pagar/`, {
+      metodo: this.metodoPago
+    }).subscribe({
+      next: (res) => {
+        this.pagando     = false;
+        this.pagoExitoso = res.pedido.pago;
+        const idx = this.pedidos.findIndex(p => p.id === this.pedidoAPagar!.id);
+        if (idx !== -1) this.pedidos[idx] = res.pedido;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.pagando = false;
+        this.toast.mostrarError(err.error?.error ?? 'No se pudo procesar el pago.');
+        this.cdr.detectChanges();
       }
     });
   }
