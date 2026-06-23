@@ -72,9 +72,15 @@ export class Login implements OnInit {
           this.router.navigate(['/home']);
         }
       },
-      error: () => {
+      error: (err: any) => {
         this.cargando = false;
-        this.errorMessage = 'Correo o contraseña incorrectos.';
+        if (err.status === 0) {
+          this.errorMessage = 'No se pudo conectar con el servidor. Intenta de nuevo en unos segundos.';
+        } else if (err.status === 400 || err.status === 401) {
+          this.errorMessage = err.error?.detail ?? err.error?.error ?? 'Correo o contraseña incorrectos.';
+        } else {
+          this.errorMessage = 'Ocurrió un error inesperado. Intenta de nuevo.';
+        }
       }
     });
   }
