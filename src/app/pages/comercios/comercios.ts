@@ -186,9 +186,21 @@ export class Comercios implements OnInit {
 
   categoriaIcono(cat: string): string {
     const m: Record<string, string> = {
-      restaurante: '🍴', farmacia: '💊', bodega: '🏪',
-      mercado: '🛒', postres: '🍰', otro: '📦'
+      restaurante: '🍽️', farmacia: '💊', bodega: '🏪',
+      mercado: '🥦', postres: '🍰', otro: '📦'
     };
     return m[cat] ?? '🏪';
+  }
+
+  categoriaColor(cat: string): string {
+    const m: Record<string, string> = {
+      restaurante: 'linear-gradient(135deg,#ff6b35 0%,#f7c59f 100%)',
+      farmacia:    'linear-gradient(135deg,#56ab2f 0%,#a8e063 100%)',
+      bodega:      'linear-gradient(135deg,#f7971e 0%,#ffd200 100%)',
+      mercado:     'linear-gradient(135deg,#11998e 0%,#38ef7d 100%)',
+      postres:     'linear-gradient(135deg,#f953c6 0%,#b91d73 100%)',
+      otro:        'linear-gradient(135deg,#667eea 0%,#764ba2 100%)',
+    };
+    return m[cat] ?? 'linear-gradient(135deg,#2e7d32 0%,#66bb6a 100%)';
   }
 }

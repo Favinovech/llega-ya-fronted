@@ -25,14 +25,14 @@ $font:'Inter','Segoe UI',system-ui,sans-serif;
 
 // ── Estado card ───────────────────────────────────
 .state-card {
-  max-width:480px; margin:0 auto; text-align:center;
-  background:white; border:1.5px solid $border; border-radius:20px; padding:48px 40px; display:flex; flex-direction:column; align-items:center; gap:16px;
-  .state-icon { width:64px; height:64px; background:#f3f4f6; border-radius:50%; display:flex; align-items:center; justify-content:center;
-    svg { width:28px; height:28px; stroke:#9ca3af; }
-    &.success { background:$pale; svg { stroke:$verde; } }
-  }
+  max-width:520px; margin:0 auto; text-align:center;
+  background:white; border:1.5px solid $border; border-radius:20px; padding:40px 40px 48px; display:flex; flex-direction:column; align-items:center; gap:16px;
   h2 { font-size:1.3rem; font-weight:800; color:$negro; }
   p  { font-size:.9rem; color:$gris; line-height:1.6; }
+}
+.state-illustration {
+  width: 200px; height: 160px;
+  svg { width:100%; height:auto; display:block; }
 }
 
 // ── Layout ────────────────────────────────────────

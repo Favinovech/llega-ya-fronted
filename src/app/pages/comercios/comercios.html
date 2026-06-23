@@ -44,19 +44,19 @@
 
     <div class="negocios-grid" *ngIf="!cargando">
       <div class="negocio-card" *ngFor="let n of negociosFiltrados" (click)="seleccionarNegocio(n)">
-        <div class="negocio-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+        <div class="negocio-cat-banner" [style.background]="categoriaColor(n.categoria)">
+          <span class="banner-emoji">{{ categoriaIcono(n.categoria) }}</span>
+          <span class="banner-cat-label">{{ n.categoria }}</span>
+        </div>
+        <div class="negocio-info-row">
+          <div class="negocio-info">
+            <strong>{{ n.nombre }}</strong>
+            <span class="negocio-dir">{{ n.direccion }}</span>
+          </div>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
           </svg>
         </div>
-        <div class="negocio-info">
-          <strong>{{ n.nombre }}</strong>
-          <span class="negocio-cat">{{ n.categoria }}</span>
-          <span class="negocio-dir">{{ n.direccion }}</span>
-        </div>
-        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 18l6-6-6-6"/>
-        </svg>
       </div>
 
       <div class="empty-state" *ngIf="negociosFiltrados.length === 0">
@@ -76,10 +76,8 @@
         Volver
       </button>
       <div class="negocio-header-info">
-        <div class="negocio-header-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
+        <div class="negocio-header-icon" [style.background]="categoriaColor(negocioActivo.categoria)">
+          <span class="header-emoji">{{ categoriaIcono(negocioActivo.categoria) }}</span>
         </div>
         <div>
           <h2>{{ negocioActivo.nombre }}</h2>
@@ -102,6 +100,9 @@
 
     <div class="productos-grid" *ngIf="!cargandoProds">
       <div class="producto-card" *ngFor="let p of productos">
+        <div class="producto-img-banner" [style.background]="categoriaColor(p.categoria)">
+          <span class="producto-banner-emoji">{{ categoriaIcono(p.categoria) }}</span>
+        </div>
         <div class="producto-info">
           <strong>{{ p.nombre }}</strong>
           <span class="producto-desc">{{ p.descripcion }}</span>

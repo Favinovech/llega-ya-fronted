@@ -21,9 +21,30 @@
 
     <!-- PEDIDO CONFIRMADO -->
     <div class="state-card" *ngIf="pedidoOk">
-      <div class="state-icon success">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
+      <div class="state-illustration">
+        <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Fondo círculo -->
+          <circle cx="100" cy="80" r="70" fill="#e8f5e9"/>
+          <!-- Caja de delivery -->
+          <rect x="58" y="55" width="64" height="52" rx="8" fill="#2e7d32"/>
+          <rect x="58" y="55" width="64" height="22" rx="8" fill="#1b5e20"/>
+          <rect x="72" y="62" width="36" height="8" rx="4" fill="rgba(255,255,255,0.25)"/>
+          <line x1="90" y1="55" x2="90" y2="107" stroke="#1b5e20" stroke-width="2"/>
+          <!-- Tapa caja -->
+          <rect x="52" y="48" width="76" height="14" rx="6" fill="#388e3c"/>
+          <!-- Asa -->
+          <path d="M82 48 Q82 36 100 36 Q118 36 118 48" stroke="#388e3c" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <!-- Checkmark badge -->
+          <circle cx="138" cy="48" r="20" fill="#4caf50"/>
+          <polyline points="127,48 135,56 150,40" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Estrellas decorativas -->
+          <polygon points="50,35 52,29 54,35 60,35 55,39 57,45 52,41 47,45 49,39 44,35" fill="#ffd54f" opacity="0.8"/>
+          <polygon points="155,95 156.5,90 158,95 163,95 159,98 160.5,103 155,100 149.5,103 151,98 147,95" fill="#ffd54f" opacity="0.7"/>
+          <!-- Puntos decorativos -->
+          <circle cx="45" cy="90" r="4" fill="#a5d6a7"/>
+          <circle cx="158" cy="65" r="3" fill="#c8e6c9"/>
+          <circle cx="60" cy="115" r="3" fill="#a5d6a7"/>
+          <circle cx="145" cy="115" r="5" fill="#c8e6c9"/>
         </svg>
       </div>
       <h2>¡Pedido confirmado!</h2>
@@ -33,10 +54,26 @@
 
     <!-- CARRITO VACÍO -->
     <div class="state-card" *ngIf="!pedidoOk && items.length === 0">
-      <div class="state-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      <div class="state-illustration">
+        <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Fondo círculo -->
+          <circle cx="100" cy="80" r="70" fill="#f9fafb"/>
+          <!-- Carrito vacío -->
+          <path d="M30 38 L42 38 L58 100 L148 100 L162 58 L58 58" stroke="#d1d5db" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Ruedas -->
+          <circle cx="72" cy="116" r="10" fill="none" stroke="#d1d5db" stroke-width="4"/>
+          <circle cx="136" cy="116" r="10" fill="none" stroke="#d1d5db" stroke-width="4"/>
+          <!-- Signo de interrogación / vacío -->
+          <text x="90" y="88" font-size="24" fill="#e5e7eb" font-family="sans-serif" font-weight="bold">?</text>
+          <!-- Líneas de fondo -->
+          <line x1="76" y1="68" x2="76" y2="92" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="100" y1="68" x2="100" y2="92" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="124" y1="68" x2="124" y2="92" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4,3"/>
+          <!-- Decoración -->
+          <circle cx="48" cy="50" r="5" fill="#f3f4f6"/>
+          <circle cx="155" cy="75" r="4" fill="#f3f4f6"/>
+          <circle cx="155" cy="48" r="6" fill="#f3f4f6"/>
+          <circle cx="44" cy="110" r="4" fill="#f3f4f6"/>
         </svg>
       </div>
       <h2>Tu carrito está vacío</h2>

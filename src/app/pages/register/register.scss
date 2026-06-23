@@ -44,6 +44,13 @@ $font:   'Inter', 'Segoe UI', system-ui, sans-serif;
   .chip { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); color:white; font-size:.82rem; padding:6px 14px; border-radius:20px; }
 }
 
+.left-illustration {
+  z-index: 1;
+  margin-top: 16px;
+  width: 100%;
+  svg { width: 100%; height: auto; display: block; }
+}
+
 .right {
   width: 520px;
   flex-shrink: 0;
