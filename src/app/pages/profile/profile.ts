@@ -8,6 +8,8 @@ import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
 import { environment } from '../../../environments/environment';
+import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
+
 
 @Component({
   selector: 'app-profile',
@@ -18,6 +20,9 @@ import { environment } from '../../../environments/environment';
 })
 export class Profile implements OnInit {
   private api = environment.apiUrl;
+  readonly limits = limits;
+  soloLetrasInput  = RegistroValidators.soloLetrasInput;
+  soloNumerosInput = RegistroValidators.soloNumerosInput;
 
   usuario: any = null;
   seccionActiva = 'datos';
@@ -53,10 +58,19 @@ export class Profile implements OnInit {
 
   initForm() {
     this.editForm = this.fb.group({
-      nombre:   [this.usuario?.nombre   ?? '', Validators.required],
-      apellido: [this.usuario?.apellido ?? '', Validators.required],
-      telefono: [this.usuario?.telefono ?? ''],
+      nombre:   [this.usuario?.nombre   ?? '', [Validators.required, Validators.minLength(this.limits.nombre.min), Validators.maxLength(this.limits.nombre.max)]],
+      apellido: [this.usuario?.apellido ?? '', [Validators.required, Validators.minLength(this.limits.apellido.min), Validators.maxLength(this.limits.apellido.max)]],
+      telefono: [this.usuario?.telefono ?? '', [Validators.required, Validators.minLength(this.limits.telefono.min), Validators.maxLength(this.limits.telefono.max)]],
     });
+  }
+
+  getError(campo: string): string {
+  const control = this.editForm.get(campo);
+    if (!control?.touched || !control.errors) return '';
+    const errores = control.errors;
+    const mensajes = MENSAJES_ERROR[campo] ?? {};
+    const primerError = Object.keys(errores)[0];
+    return mensajes[primerError] ?? 'Campo inválido.';
   }
 
   cargarPerfil() {

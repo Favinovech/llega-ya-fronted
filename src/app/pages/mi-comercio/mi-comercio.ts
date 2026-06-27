@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast';
 import { PedidoService } from '../../services/pedido.service';
 import { environment } from '../../../environments/environment';
+import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
   selector: 'app-mi-comercio',
@@ -24,8 +25,10 @@ export class MiComercio implements OnInit {
   negocio: Negocio | null = null;
   tabActiva = 'resumen';
   cargando  = true;
-
-  // Pedidos (mock por ahora, conectar al backend después)
+  readonly limits = limits;
+  soloLetrasInput  = RegistroValidators.soloLetrasInput;
+  soloNumerosInput = RegistroValidators.soloNumerosInput;
+  
   pedidos: any[] = [];
 
   // Edición del negocio
@@ -79,15 +82,32 @@ export class MiComercio implements OnInit {
   }
 
   initForm(n: Negocio) {
-    this.editForm = this.fb.group({
-      nombre:        [n.nombre,        Validators.required],
-      descripcion:   [n.descripcion],
-      direccion:     [n.direccion,     Validators.required],
-      categoria:     [n.categoria,     Validators.required],
-      telefono:      [n.telefono],
-      hora_apertura: [n.hora_apertura],
-      hora_cierre:   [n.hora_cierre],
-    });
+  this.editForm = this.fb.group({
+    nombre:        [n.nombre ?? '',        [Validators.required, Validators.minLength(limits.nombre_comercial.min), Validators.maxLength(limits.nombre_comercial.max)]],
+    descripcion:   [n.descripcion ?? '',   [Validators.maxLength(limits.descripcion.max)]],
+    direccion:     [n.direccion ?? '',     [Validators.required, Validators.minLength(limits.direccion.min), Validators.maxLength(limits.direccion.max)]],
+    categoria:     [n.categoria ?? '',     Validators.required],
+    telefono:      [n.telefono ?? '',      [RegistroValidators.telefonoPeruano]],
+    hora_apertura: [n.hora_apertura ?? ''],
+    hora_cierre:   [n.hora_cierre ?? ''],
+  });
+
+    this.editForm.addValidators(RegistroValidators.horaCierreValida);
+    this.editForm.updateValueAndValidity();
+  }
+
+  get errorHoraCierre(): string {
+    if (!this.editForm?.errors?.['horaCierreInvalida']) return '';
+    return MENSAJES_ERROR['hora_cierre']['horaCierreInvalida'];
+  }
+
+  getError(campo: string): string {
+  const control = this.editForm.get(campo);
+    if (!control?.touched || !control.errors) return '';
+    const errores = control.errors;
+    const mensajes = MENSAJES_ERROR[campo] ?? {};
+    const primerError = Object.keys(errores)[0];
+    return mensajes[primerError] ?? 'Campo inválido.';
   }
 
   cargarPedidos() {

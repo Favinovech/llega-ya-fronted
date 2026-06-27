@@ -8,6 +8,7 @@ import { Footer } from '../components/footer/footer';
 import { CarritoService, ItemCarrito } from '../../services/carrito.service';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
+import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
   selector: 'app-carrito',
@@ -26,7 +27,7 @@ export class Carrito implements OnInit {
   confirmando = false;
   errorMsg   = '';
   pedidoOk   = false;
-
+  readonly limits = limits;
   constructor(
     public carritoSvc: CarritoService,
     private http: HttpClient,

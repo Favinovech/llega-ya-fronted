@@ -147,7 +147,8 @@
               </svg>
               Dirección de entrega *
             </label>
-            <input type="text" [(ngModel)]="direccion" placeholder="Ej: Av. Arequipa 1234, Lince"/>
+            <input type="text" [(ngModel)]="direccion" placeholder="Ej: Av. Arequipa 1234, Lince"
+            [maxlength]="limits.direccion.max"/>
           </div>
 
           <div class="error-msg" *ngIf="errorMsg">{{ errorMsg }}</div>

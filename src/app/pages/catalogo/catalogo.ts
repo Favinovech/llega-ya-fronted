@@ -6,6 +6,7 @@ import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
 import { ProductoService, Producto, HistorialCambio } from '../../services/producto.service';
+import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
   selector: 'app-catalogo',
@@ -19,7 +20,9 @@ export class Catalogo implements OnInit {
 
   productos: Producto[] = [];
   cargando = false;
-
+  readonly limits = limits;
+  soloDecimalesInput = RegistroValidators.soloDecimalesInput;
+  limitarPrecio = RegistroValidators.limitarPrecio;
   // Filtros
   filtroTexto = '';
   filtroCategoria = '';
