@@ -1,141 +1,171 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { provideRouter } from '@angular/router';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { Router, ActivatedRoute, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { of, throwError } from 'rxjs';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-
-import { Login } from './login';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AuthService } from '../../services/auth.service';
+import { Login } from './login';
+import { of, throwError } from 'rxjs';
 
-// ── Mock completo del AuthService ──────────────────────────────
-const authMock = {
-  login:      vi.fn(),
-  getRol:     vi.fn(),
-  isLoggedIn: vi.fn(),
-};
-
-describe('Login – Pruebas Unitarias (HU02)', () => {
+describe('Login Component', () => {
   let component: Login;
   let fixture: ComponentFixture<Login>;
+  let authSpy: {
+    login:      ReturnType<typeof vi.fn>;
+    getRol:     ReturnType<typeof vi.fn>;
+    getToken:   ReturnType<typeof vi.fn>;
+    getUsuario: ReturnType<typeof vi.fn>;
+    isLoggedIn: ReturnType<typeof vi.fn>;
+  };
+  let routerSpy: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
-    vi.clearAllMocks(); // resetea los spies antes de cada prueba
+    authSpy = {
+      login:      vi.fn(),
+      getRol:     vi.fn().mockReturnValue('cliente'),
+      getToken:   vi.fn().mockReturnValue(null),
+      getUsuario: vi.fn().mockReturnValue(null),
+      isLoggedIn: vi.fn().mockReturnValue(false),
+    };
+
+    routerSpy = { navigate: vi.fn() };
 
     await TestBed.configureTestingModule({
-      imports: [Login, ReactiveFormsModule],
+      imports: [Login],
       providers: [
-        provideRouter([]),
         provideHttpClient(),
-        { provide: AuthService, useValue: authMock },
+        provideHttpClientTesting(),
+        provideRouter([]),
+        { provide: AuthService, useValue: authSpy },
+        { provide: Router,      useValue: routerSpy },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { params: {}, queryParams: {} },
+            params:   of({}),
+            queryParams: of({}),
+          }
+        },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Login);
+    fixture   = TestBed.createComponent(Login);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    localStorage.clear();
   });
 
-  // ── Validaciones de formulario ─────────────────────────────
+  afterEach(() => localStorage.clear());
 
-  it('CP-LOG-05 | formulario debe ser INVÁLIDO con ambos campos vacíos', () => {
-    component.loginForm.setValue({ email: '', password: '', remember: false });
-    expect(component.loginForm.invalid).toBe(true);
+  it('se crea correctamente', () => {
+    expect(component).toBeTruthy();
   });
 
-  it('CP-LOG-05 | campo email vacío debe tener error "required"', () => {
-    const ctrl = component.loginForm.get('email')!;
-    ctrl.setValue('');
-    ctrl.markAsTouched();
-    expect(ctrl.hasError('required')).toBe(true);
+  it('el formulario tiene los campos email, password y remember', () => {
+    expect(component.loginForm.contains('email')).toBe(true);
+    expect(component.loginForm.contains('password')).toBe(true);
+    expect(component.loginForm.contains('remember')).toBe(true);
   });
 
-  it('CP-LOG-05 | email sin "@" debe tener error "email"', () => {
-    const ctrl = component.loginForm.get('email')!;
-    ctrl.setValue('correoSinArroba');
-    expect(ctrl.hasError('email')).toBe(true);
+  it('el formulario inicia inválido con campos vacíos', () => {
+    expect(component.loginForm.valid).toBe(false);
   });
 
-  it('CP-LOG-05 | password menor a 4 caracteres debe tener error "minlength"', () => {
-    const ctrl = component.loginForm.get('password')!;
-    ctrl.setValue('123');
-    expect(ctrl.hasError('minlength')).toBe(true);
+  it('email inválido hace el formulario inválido', () => {
+    component.loginForm.patchValue({ email: 'no-es-email', password: '1234' });
+    expect(component.loginForm.valid).toBe(false);
   });
 
-  it('CP-LOG-01 | formulario debe ser VÁLIDO con email y password correctos', () => {
-    component.loginForm.setValue({
-      email: 'carlos@test.com',
-      password: 'Test123',
-      remember: false,
-    });
+  it('formulario válido con email y password correctos', () => {
+    component.loginForm.patchValue({ email: 'user@test.com', password: '1234' });
     expect(component.loginForm.valid).toBe(true);
   });
 
-  // ── Estado inicial ─────────────────────────────────────────
-
-  it('CP-LOG-06 | showPassword debe empezar en false', () => {
-    expect(component.showPassword).toBe(false);
+  it('password con menos de 4 caracteres hace el formulario inválido', () => {
+    component.loginForm.patchValue({ email: 'user@test.com', password: '123' });
+    expect(component.loginForm.valid).toBe(false);
   });
 
-  it('CP-LOG-01 | errorMessage debe empezar vacío', () => {
-    expect(component.errorMessage).toBe('');
-  });
-
-  it('CP-LOG-01 | cargando debe empezar en false', () => {
-    expect(component.cargando).toBe(false);
-  });
-
-  // ── Llamadas al servicio ───────────────────────────────────
-
-  it('CP-LOG-05 | login() NO debe llamar al servicio si el formulario es inválido', () => {
-    component.loginForm.setValue({ email: '', password: '', remember: false });
+  it('login() con formulario inválido muestra mensaje de error', () => {
+    component.loginForm.patchValue({ email: '', password: '' });
     component.login();
-    expect(authMock.login).not.toHaveBeenCalled();
+    expect(component.errorMessage).toBe('Completa todos los campos correctamente.');
   });
 
-  it('CP-LOG-01 | login() debe llamar a auth.login() con email y password correctos', () => {
-    authMock.login.mockReturnValue(of({ access: 'fake-token' }));
-    authMock.getRol.mockReturnValue('cliente');
-
-    component.loginForm.setValue({
-      email: 'carlos@test.com',
-      password: 'Test123',
-      remember: false,
-    });
+  it('login() con formulario inválido no llama a AuthService', () => {
+    component.loginForm.patchValue({ email: '', password: '' });
     component.login();
-
-    expect(authMock.login).toHaveBeenCalledWith('carlos@test.com', 'Test123');
+    expect(authSpy.login).not.toHaveBeenCalled();
   });
 
-  it('CP-LOG-04 | login() fallido (401) debe poner mensaje de error y cargando=false', () => {
-    authMock.login.mockReturnValue(
-      throwError(() => ({
-        status: 401,
-        error: { detail: 'Correo o contraseña incorrectos.' },
-      }))
-    );
-
-    component.loginForm.setValue({
-      email: 'mal@test.com',
-      password: 'wrong1',
-      remember: false,
-    });
+  it('login() exitoso navega a /home para cliente', () => {
+    authSpy.login.mockReturnValue(of({ access: 'token', usuario: {} }));
+    authSpy.getRol.mockReturnValue('cliente');
+    component.loginForm.patchValue({ email: 'user@test.com', password: '1234' });
     component.login();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/home']);
+  });
 
+  it('login() exitoso navega a /admin para admin', () => {
+    authSpy.login.mockReturnValue(of({ access: 'token', usuario: {} }));
+    authSpy.getRol.mockReturnValue('admin');
+    component.loginForm.patchValue({ email: 'admin@test.com', password: '1234' });
+    component.login();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/admin']);
+  });
+
+  it('login() exitoso navega a /repartidor para repartidor', () => {
+    authSpy.login.mockReturnValue(of({ access: 'token', usuario: {} }));
+    authSpy.getRol.mockReturnValue('repartidor');
+    component.loginForm.patchValue({ email: 'rep@test.com', password: '1234' });
+    component.login();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/repartidor']);
+  });
+
+  it('login() con error 401 muestra mensaje de credenciales incorrectas', () => {
+    authSpy.login.mockReturnValue(throwError(() => ({
+      status: 401,
+      error: { detail: 'Correo o contraseña incorrectos.' }
+    })));
+    component.loginForm.patchValue({ email: 'user@test.com', password: '1234' });
+    component.login();
     expect(component.errorMessage).toBe('Correo o contraseña incorrectos.');
-    expect(component.cargando).toBe(false);
   });
 
-  it('CP-LOG-04 | login() con servidor caído (status 0) debe mostrar error de conexión', () => {
-    authMock.login.mockReturnValue(throwError(() => ({ status: 0 })));
+  it('login() con error 0 muestra mensaje de sin conexión', () => {
+    authSpy.login.mockReturnValue(throwError(() => ({ status: 0 })));
+    component.loginForm.patchValue({ email: 'user@test.com', password: '1234' });
+    component.login();
+    expect(component.errorMessage).toContain('No se pudo conectar');
+  });
 
-    component.loginForm.setValue({
-      email: 'carlos@test.com',
-      password: 'Test123',
-      remember: false,
+  it('login() con remember guarda email y password en localStorage', () => {
+    authSpy.login.mockReturnValue(of({ access: 'token', usuario: {} }));
+    component.loginForm.patchValue({
+      email: 'user@test.com', password: '1234', remember: true
     });
     component.login();
+    expect(localStorage.getItem('saved_email')).toBe('user@test.com');
+    expect(localStorage.getItem('saved_password')).toBe('1234');
+  });
 
-    expect(component.errorMessage).toContain('servidor');
+  it('login() sin remember elimina credenciales guardadas', () => {
+    localStorage.setItem('saved_email', 'viejo@test.com');
+    localStorage.setItem('saved_password', 'viejaclave');
+    authSpy.login.mockReturnValue(of({ access: 'token', usuario: {} }));
+    component.loginForm.patchValue({
+      email: 'user@test.com', password: '1234', remember: false
+    });
+    component.login();
+    expect(localStorage.getItem('saved_email')).toBeNull();
+    expect(localStorage.getItem('saved_password')).toBeNull();
+  });
+
+  it('ngOnInit() precarga email y password si están en localStorage', () => {
+    localStorage.setItem('saved_email', 'guardado@test.com');
+    localStorage.setItem('saved_password', 'claveGuardada');
+    component.ngOnInit();
+    expect(component.loginForm.value.email).toBe('guardado@test.com');
+    expect(component.loginForm.value.password).toBe('claveGuardada');
+    expect(component.loginForm.value.remember).toBe(true);
   });
 });

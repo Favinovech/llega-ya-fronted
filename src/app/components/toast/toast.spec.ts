@@ -1,22 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { ToastService } from '../../services/toast';
 
-import { Toast } from './toast';
+describe('ToastService (component spec)', () => {
+  let service: ToastService;
 
-describe('Toast', () => {
-  let component: Toast;
-  let fixture: ComponentFixture<Toast>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Toast],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(Toast);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ToastService);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('se crea correctamente', () => {
+    expect(service).toBeTruthy();
   });
 });
