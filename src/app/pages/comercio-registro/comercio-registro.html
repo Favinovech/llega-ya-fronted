@@ -78,10 +78,11 @@
             <span class="input-icon">🔢</span>
             <input type="text" formControlName="ruc"
                    placeholder="Ej: 20123456789"
-                   maxlength="11" />
+                   [maxlength]="limits.ruc.max"
+                   (keypress)="soloNumerosInput($event)" />
           </div>
-          <span class="error-msg" *ngIf="invalido(paso1,'ruc')">
-            El RUC debe tener exactamente 11 dígitos
+          <span class="error-msg" *ngIf="getError(paso1,'ruc')">
+            {{ getError(paso1,'ruc') }}
           </span>
           <span class="hint">Ingresa el RUC de tu empresa o persona natural con negocio</span>
         </div>
@@ -91,10 +92,11 @@
           <div class="input-wrap">
             <span class="input-icon">🏢</span>
             <input type="text" formControlName="razon_social"
-                   placeholder="Ej: INVERSIONES PEREZ SAC" />
+                   placeholder="Ej: INVERSIONES PEREZ SAC"
+                   [maxlength]="limits.razon_social.max" />
           </div>
-          <span class="error-msg" *ngIf="invalido(paso1,'razon_social')">
-            La razón social es obligatoria
+          <span class="error-msg" *ngIf="getError(paso1,'razon_social')">
+            {{ getError(paso1,'razon_social') }}
           </span>
         </div>
 
@@ -103,10 +105,11 @@
           <div class="input-wrap">
             <span class="input-icon">✏️</span>
             <input type="text" formControlName="nombre"
-                   placeholder="Ej: Pollería El Tizón" />
+                   placeholder="Ej: Pollería El Tizón"
+                   [maxlength]="limits.nombre_comercial.max" />
           </div>
-          <span class="error-msg" *ngIf="invalido(paso1,'nombre')">
-            El nombre comercial es obligatorio
+          <span class="error-msg" *ngIf="getError(paso1,'nombre')">
+            {{ getError(paso1,'nombre') }}
           </span>
           <span class="hint">Así te verán los clientes en la app</span>
         </div>
@@ -155,14 +158,15 @@
           <label>Descripción breve <span class="req">*</span></label>
           <div class="textarea-wrap">
             <textarea formControlName="descripcion" rows="3"
-              placeholder="Ej: Especialistas en pollo a la brasa y parrillas desde 1998. Atendemos en Lince y Jesús María.">
+              placeholder="Ej: Especialistas en pollo a la brasa y parrillas desde 1998. Atendemos en Lince y Jesús María."
+              [maxlength]="limits.descripcion.max">
             </textarea>
             <span class="char-count">
               {{ paso2.get('descripcion')?.value?.length ?? 0 }}/200
             </span>
           </div>
-          <span class="error-msg" *ngIf="invalido(paso2,'descripcion')">
-            La descripción es obligatoria
+          <span class="error-msg" *ngIf="getError(paso2,'descripcion')">
+            {{ getError(paso2,'descripcion') }}
           </span>
         </div>
 
@@ -173,10 +177,12 @@
             <div class="input-wrap">
               <span class="input-icon">📱</span>
               <input type="tel" formControlName="telefono"
-                     placeholder="Ej: 987654321" maxlength="9" />
+                     placeholder="Ej: 987654321"
+                     [maxlength]="limits.telefono.max" 
+                     (keypress)="soloNumerosInput($event)" />
             </div>
-            <span class="error-msg" *ngIf="invalido(paso2,'telefono')">
-              Ingresa un celular de 9 dígitos
+            <span class="error-msg" *ngIf="getError(paso2,'telefono')">
+              {{ getError(paso2,'telefono') }}
             </span>
           </div>
 
@@ -221,10 +227,11 @@
           <div class="input-wrap">
             <span class="input-icon">📍</span>
             <input type="text" formControlName="direccion"
-                   placeholder="Ej: Av. Arequipa 1234, Lince, Lima" />
+                   placeholder="Ej: Av. Arequipa 1234, Lince, Lima"
+                   [maxlength]="limits.direccion.max" />
           </div>
-          <span class="error-msg" *ngIf="invalido(paso3,'direccion')">
-            La dirección es obligatoria
+          <span class="error-msg" *ngIf="getError(paso3,'direccion')">
+            {{ getError(paso3,'direccion') }}
           </span>
         </div>
 
@@ -259,6 +266,9 @@
             </div>
           </div>
         </div>
+        <span class="error-msg" *ngIf="paso3.touched && errorHoraCierre">
+          {{ errorHoraCierre }}
+        </span>
 
         <!-- Resumen horario -->
         <div class="horario-preview">

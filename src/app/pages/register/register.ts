@@ -3,6 +3,7 @@ import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
   selector: 'app-register',
@@ -11,12 +12,16 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
+
 export class Register {
+  readonly limits = limits;
   form!: FormGroup;
   errorMessage = '';
   exitoMessage = '';
   cargando = false;
   tipoSeleccionado: 'cliente' | 'repartidor' | '' = '';
+  soloLetrasInput = RegistroValidators.soloLetrasInput;
+  soloNumerosInput = RegistroValidators.soloNumerosInput;
 
   constructor(
     private fb: FormBuilder,
@@ -26,14 +31,23 @@ export class Register {
     this.buildForm();
   }
 
+  getError(campo: string): string {
+    const control = this.form.get(campo);
+    if (!control?.touched || !control.errors) return '';
+    const errores = control.errors;
+    const mensajes = MENSAJES_ERROR[campo] ?? {};
+    const primerError = Object.keys(errores)[0];
+    return mensajes[primerError] ?? 'Campo inválido.';
+  }
+  
   buildForm() {
     this.form = this.fb.group({
-      nombre:         ['', Validators.required],
-      apellido:       ['', Validators.required],
-      email:          ['', [Validators.required, Validators.email]],
-      telefono:       [''],
-      password:       ['', [Validators.required, Validators.minLength(6)]],
-      dni:            [''],
+      nombre:   ['', [Validators.required, Validators.minLength(limits.nombre.min), Validators.maxLength(limits.nombre.max), RegistroValidators.soloLetras]],
+      apellido: ['', [Validators.required, Validators.minLength(limits.apellido.min), Validators.maxLength(limits.apellido.max), RegistroValidators.soloLetras]],
+      email:    ['', [Validators.required, Validators.email]],
+      telefono: ['', [RegistroValidators.telefonoPeruano]],
+      password: ['', [Validators.required, Validators.minLength(limits.password.min), Validators.maxLength(limits.password.max), RegistroValidators.contieneNumero]],
+      dni:            ['', [RegistroValidators.dniPeruano]],
       vehiculo:       ['moto'],
       zona_cobertura: [''],
     });

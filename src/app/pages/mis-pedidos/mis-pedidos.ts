@@ -10,6 +10,7 @@ import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
 import { CalificacionService, Calificacion } from '../../services/calificacion.service';
 import { environment } from '../../../environments/environment';
+import { limits } from '../../validators';
 
 interface Pago {
   id: number;
@@ -68,7 +69,7 @@ export class MisPedidos implements OnInit {
   comentarioCalificacion    = '';
   enviandoCalificacion      = false;
   readonly estrellas        = [1, 2, 3, 4, 5];
-
+  readonly limits = limits;
   // Modal pago
   mostrarModalPago  = false;
   pedidoAPagar: Pedido | null = null;

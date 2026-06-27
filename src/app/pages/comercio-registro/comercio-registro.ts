@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { Navbar } from '../components/navbar/navbar';
 import { NegocioService } from '../../services/negocio.service';
 import { environment } from '../../../environments/environment';
+import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
   selector: 'app-comercio-registro',
@@ -17,7 +18,9 @@ import { environment } from '../../../environments/environment';
 })
 export class ComercioRegistro implements OnInit {
   private api = environment.apiUrl;
-
+  readonly limits = limits;
+  soloLetrasInput  = RegistroValidators.soloLetrasInput;
+  soloNumerosInput = RegistroValidators.soloNumerosInput; 
   pasoActual = 1;
   totalPasos = 3;
   guardando  = false;
@@ -26,6 +29,20 @@ export class ComercioRegistro implements OnInit {
   // Logo preview
   logoPreview: string | null = null;
   logoFile:    File | null   = null;
+
+  getError(form: FormGroup, campo: string): string {
+    const control = form.get(campo);
+    if (!control?.touched || !control.errors) return '';
+    const errores = control.errors;
+    const mensajes = MENSAJES_ERROR[campo] ?? {};
+    const primerError = Object.keys(errores)[0];
+    return mensajes[primerError] ?? 'Campo inválido.';
+  }
+
+  get errorHoraCierre(): string {
+    if (!this.paso3.errors?.['horaCierreInvalida']) return '';
+    return MENSAJES_ERROR['hora_cierre']['horaCierreInvalida'];
+  }
 
   rubros = [
     { valor: 'restaurante', icono: '🍴', label: 'Restaurante' },
@@ -65,22 +82,22 @@ export class ComercioRegistro implements OnInit {
 
   ngOnInit() {
     this.paso1 = this.fb.group({
-      ruc:          ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
-      razon_social: ['', Validators.required],
-      nombre:       ['', Validators.required],
+      ruc:          ['', [Validators.required, RegistroValidators.rucPeruano, Validators.maxLength(limits.ruc.max)]],
+      razon_social: ['', [Validators.required, Validators.maxLength(limits.razon_social.max)]],
+      nombre:       ['', [Validators.required, Validators.minLength(limits.nombre_comercial.min), Validators.maxLength(limits.nombre_comercial.max)]],
     });
 
     this.paso2 = this.fb.group({
       categoria:   ['', Validators.required],
-      descripcion: ['', [Validators.required, Validators.maxLength(200)]],
-      telefono:    ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
+      descripcion: ['', [Validators.required, Validators.maxLength(limits.descripcion.max)]],
+      telefono:    ['', [Validators.required, RegistroValidators.telefonoPeruano, Validators.maxLength(limits.telefono.max)]],
     });
 
     this.paso3 = this.fb.group({
-      direccion:     ['', Validators.required],
+      direccion:     ['', Validators.required, Validators.maxLength(limits.direccion.max)],
       hora_apertura: ['08:00', Validators.required],
       hora_cierre:   ['22:00', Validators.required],
-    });
+    }, { validators: RegistroValidators.horaCierreValida });
   }
 
   // ── Navegación wizard ──────────────────────────────

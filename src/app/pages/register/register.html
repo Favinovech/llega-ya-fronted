@@ -139,32 +139,41 @@
           <div class="row-2">
             <div class="field">
               <label>Nombres *</label>
-              <input type="text" placeholder="Juan" formControlName="nombre"/>
-              <div class="field-error" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">Campo obligatorio</div>
+              <input type="text" placeholder="Juan" formControlName="nombre"
+              [maxlength]="limits.nombre.max"
+              (keypress)="soloLetrasInput($event)"/>
+              <div class="field-error" *ngIf="getError('nombre')">{{ getError('nombre') }}</div>
             </div>
             <div class="field">
               <label>Apellidos *</label>
-              <input type="text" placeholder="Pérez" formControlName="apellido"/>
-              <div class="field-error" *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">Campo obligatorio</div>
+              <input type="text" placeholder="Pérez" formControlName="apellido"
+              [maxlength]="limits.apellido.max"
+              (keypress)="soloLetrasInput($event)"/>
+              <div class="field-error" *ngIf="getError('apellido')">{{ getError('apellido') }}</div>
             </div>
           </div>
 
           <div class="field">
             <label>Correo electrónico *</label>
             <input type="email" placeholder="tucorreo@ejemplo.com" formControlName="email"/>
-            <div class="field-error" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">Correo inválido</div>
+            <div class="field-error" *ngIf="getError('email')">{{ getError('email') }}</div>
           </div>
 
           <div class="field">
             <label>Celular <span class="optional">(opcional)</span></label>
-            <input type="tel" placeholder="987 654 321" formControlName="telefono"/>
+            <input type="tel" placeholder="987 654 321" formControlName="telefono"
+            [maxlength]="limits.telefono.max"
+            (keypress)="soloNumerosInput($event)"/>
+            <div class="field-error" *ngIf="getError('telefono')">{{ getError('telefono') }}</div>
           </div>
 
-          <!-- Campos extra solo para repartidor -->
+          <!-- Solo para repartidor -->
           <ng-container *ngIf="tipoSeleccionado === 'repartidor'">
             <div class="field">
               <label>DNI <span class="optional">(opcional)</span></label>
-              <input type="text" placeholder="12345678" maxlength="8" formControlName="dni"/>
+              <input type="text" placeholder="12345678" maxlength="8" formControlName="dni"
+              (keypress)="soloNumerosInput($event)"/>
+              <div class="field-error" *ngIf="getError('dni')">{{ getError('dni') }}</div>
             </div>
 
             <div class="field">
@@ -185,8 +194,10 @@
 
           <div class="field">
             <label>Contraseña *</label>
-            <input type="password" placeholder="Mínimo 6 caracteres" formControlName="password"/>
-            <div class="field-error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">Mínimo 6 caracteres</div>
+            <input type="password" placeholder="Mínimo 6 caracteres" formControlName="password"
+            [maxlength]="limits.password.max"
+            />
+            <div class="field-error" *ngIf="getError('password')">{{ getError('password') }}</div>
           </div>
 
           <div class="alert-error"   *ngIf="errorMessage">{{ errorMessage }}</div>

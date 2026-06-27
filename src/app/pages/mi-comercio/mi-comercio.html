@@ -186,13 +186,54 @@
         <div class="card" *ngIf="editando">
           <div class="card-header"><h3>Editar información</h3></div>
           <form [formGroup]="editForm" class="edit-grid">
-            <div class="campo"><label>NOMBRE COMERCIAL *</label><input type="text" formControlName="nombre"/></div>
-            <div class="campo"><label>CATEGORÍA *</label><select formControlName="categoria"><option *ngFor="let r of rubros" [value]="r.valor">{{ r.label }}</option></select></div>
-            <div class="campo full"><label>DIRECCIÓN *</label><input type="text" formControlName="direccion"/></div>
-            <div class="campo"><label>TELÉFONO</label><input type="tel" formControlName="telefono"/></div>
-            <div class="campo"><label>HORA APERTURA</label><input type="time" formControlName="hora_apertura"/></div>
-            <div class="campo"><label>HORA CIERRE</label><input type="time" formControlName="hora_cierre"/></div>
-            <div class="campo full"><label>DESCRIPCIÓN</label><textarea formControlName="descripcion" rows="3"></textarea></div>
+            <div class="campo">
+              <label>NOMBRE COMERCIAL *</label>
+              <input type="text" formControlName="nombre"
+                [maxlength]="limits.nombre_comercial.max"/>
+              <span class="error-msg" *ngIf="getError('nombre')">{{ getError('nombre') }}</span>
+            </div>
+
+            <div class="campo">
+              <label>CATEGORÍA *</label>
+              <select formControlName="categoria">
+                <option *ngFor="let r of rubros" [value]="r.valor">{{ r.label }}</option>
+              </select>
+            </div>
+
+            <div class="campo full">
+              <label>DIRECCIÓN *</label>
+              <input type="text" formControlName="direccion"
+                [maxlength]="limits.direccion.max"/>
+              <span class="error-msg" *ngIf="getError('direccion')">{{ getError('direccion') }}</span>
+            </div>
+
+            <div class="campo">
+              <label>TELÉFONO</label>
+              <input type="tel" formControlName="telefono"
+                [maxlength]="limits.telefono.max"
+                (keypress)="soloNumerosInput($event)"/>
+              <span class="error-msg" *ngIf="getError('telefono')">{{ getError('telefono') }}</span>
+            </div>
+
+            <div class="campo">
+              <label>HORA APERTURA</label>
+              <input type="time" formControlName="hora_apertura"/>
+            </div>
+
+            <div class="campo">
+              <label>HORA CIERRE</label>
+              <input type="time" formControlName="hora_cierre"/>
+              <span class="error-msg" *ngIf="editForm.touched && errorHoraCierre">
+                {{ errorHoraCierre }}
+              </span>
+            </div>
+
+            <div class="campo full">
+              <label>DESCRIPCIÓN</label>
+              <textarea formControlName="descripcion" rows="3"
+                [maxlength]="limits.descripcion.max"></textarea>
+              <span class="error-msg" *ngIf="getError('descripcion')">{{ getError('descripcion') }}</span>
+            </div>
           </form>
           <div class="error-msg" *ngIf="editError">{{ editError }}</div>
           <div class="form-actions">

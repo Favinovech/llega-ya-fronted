@@ -364,7 +364,8 @@
           <label>Comentario <span class="optional">(opcional)</span></label>
           <textarea [(ngModel)]="comentarioCalificacion"
                     placeholder="Cuéntanos tu experiencia con el repartidor..."
-                    rows="3"></textarea>
+                    rows="3"
+                    [maxlength]="limits.comentario.max"></textarea>
         </div>
       </div>
       <div class="modal-actions">
