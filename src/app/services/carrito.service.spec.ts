@@ -119,4 +119,4 @@ describe('CarritoService', () => {
   });
 });
 
-// Final del archivo carrito
+// Final del archivo carrito.service
