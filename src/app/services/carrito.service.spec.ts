@@ -118,5 +118,3 @@ describe('CarritoService', () => {
     expect(items[0].nombre).toBe('Pollo a la brasa');
   });
 });
-
-// Final del archivo carrito.service.spec.ts
