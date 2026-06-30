@@ -36,5 +36,3 @@ describe('authGuard', () => {
     expect(result).toBe('/login');
   });
 });
-
-// Finalización
