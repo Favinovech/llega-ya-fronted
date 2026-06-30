@@ -147,4 +147,4 @@ describe('AuthService', () => {
   });
 });
 
-// Final del archivo
+// Final del archivo auth
