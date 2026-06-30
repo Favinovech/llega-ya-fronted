@@ -147,4 +147,4 @@ describe('AuthService', () => {
   });
 });
 
-// Final del archivo auth.service.spec
+// Final del archivo auth.service.spec.ts
