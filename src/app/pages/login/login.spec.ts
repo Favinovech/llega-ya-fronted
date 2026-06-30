@@ -169,5 +169,3 @@ describe('Login Component', () => {
     expect(component.loginForm.value.remember).toBe(true);
   });
 });
-
-// Finalización
