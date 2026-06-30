@@ -146,5 +146,3 @@ describe('AuthService', () => {
     req.flush({});
   });
 });
-
-// Finalización
