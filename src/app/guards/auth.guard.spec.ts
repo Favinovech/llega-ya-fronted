@@ -37,4 +37,4 @@ describe('authGuard', () => {
   });
 });
 
-// Final del archivo
+// Final del archivo auth
