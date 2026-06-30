@@ -170,4 +170,4 @@ describe('Login Component', () => {
   });
 });
 
-// Final del archivo login
+// Final del archivo login.spec
