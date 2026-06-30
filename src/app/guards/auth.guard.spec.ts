@@ -37,4 +37,4 @@ describe('authGuard', () => {
   });
 });
 
-// Final del archivo auth.guard.spec
+// Final del archivo auth.guard.spec.ts
