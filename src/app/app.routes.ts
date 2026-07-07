@@ -41,6 +41,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/incidencias/incidencias').then(m => m.Incidencias) },
   { path: 'admin/reportes', canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./pages/reporte-diario/reporte-diario').then(m => m.ReporteDiarioPage) },
+  { path: 'admin/prediccion', canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./pages/prediccion-demanda/prediccion-demanda').then(m => m.PrediccionDemandaPage) },
 
   // Solo repartidor
   { path: 'repartidor', canActivate: [repartidorGuard],
