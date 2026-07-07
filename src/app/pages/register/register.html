@@ -160,7 +160,7 @@
           </div>
 
           <div class="field">
-            <label>Celular <span class="optional">(opcional)</span></label>
+            <label>Celular *</label>
             <input type="tel" placeholder="987 654 321" formControlName="telefono"
             [maxlength]="limits.telefono.max"
             (keypress)="soloNumerosInput($event)"/>
@@ -170,7 +170,7 @@
           <!-- Solo para repartidor -->
           <ng-container *ngIf="tipoSeleccionado === 'repartidor'">
             <div class="field">
-              <label>DNI <span class="optional">(opcional)</span></label>
+              <label>DNI *</label>
               <input type="text" placeholder="12345678" maxlength="8" formControlName="dni"
               (keypress)="soloNumerosInput($event)"/>
               <div class="field-error" *ngIf="getError('dni')">{{ getError('dni') }}</div>
