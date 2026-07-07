@@ -9,6 +9,7 @@ import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
 import { CalificacionService, Calificacion } from '../../services/calificacion.service';
+import { IncidenciaService, Incidencia, TipoIncidencia, TIPOS_INCIDENCIA } from '../../services/incidencia.service';
 import { environment } from '../../../environments/environment';
 import { limits, RegistroValidators } from '../../validators';
 
@@ -40,6 +41,7 @@ interface Pedido {
   motivo_cancelacion?: string | null;
   calificacion?: Calificacion | null;
   pago?: Pago | null;
+  incidencia?: Incidencia | null;
 }
 
 @Component({
@@ -82,10 +84,19 @@ export class MisPedidos implements OnInit {
   tarjetaCvv         = '';
   tarjetaNombre      = '';
 
+  // Modal incidencia
+  mostrarModalIncidencia  = false;
+  pedidoAIncidencia: Pedido | null = null;
+  tipoIncidencia: TipoIncidencia = 'pedido_no_llego';
+  descripcionIncidencia   = '';
+  enviandoIncidencia      = false;
+  readonly tiposIncidencia = TIPOS_INCIDENCIA;
+
   constructor(
     private http: HttpClient,
     private toast: ToastService,
     private calificacionSvc: CalificacionService,
+    private incidenciaSvc: IncidenciaService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -204,6 +215,61 @@ export class MisPedidos implements OnInit {
         const mensaje = err.status === 404
           ? 'La calificación de repartidores no está disponible en este momento.'
           : (err.error?.error ?? 'No se pudo enviar la calificación.');
+        this.toast.mostrarError(mensaje);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Modal incidencia (HU16) ──────────────────────
+
+  puedeReportarIncidencia(pedido: Pedido): boolean {
+    return pedido.estado !== 'cancelado' && !pedido.incidencia;
+  }
+
+  abrirModalIncidencia(pedido: Pedido) {
+    this.pedidoAIncidencia       = pedido;
+    this.tipoIncidencia          = 'pedido_no_llego';
+    this.descripcionIncidencia   = '';
+    this.enviandoIncidencia      = false;
+    this.mostrarModalIncidencia  = true;
+  }
+
+  cerrarModalIncidencia() {
+    this.mostrarModalIncidencia = false;
+    this.cdr.detectChanges();
+  }
+
+  etiquetaEstadoIncidencia(estado: string): string {
+    const mapa: Record<string, string> = {
+      abierto:    'Abierto',
+      en_proceso: 'En proceso',
+      resuelto:   'Resuelto',
+      rechazado:  'Rechazado',
+    };
+    return mapa[estado] ?? estado;
+  }
+
+  enviarIncidencia() {
+    if (!this.pedidoAIncidencia || !this.descripcionIncidencia.trim()) return;
+    this.enviandoIncidencia = true;
+
+    this.incidenciaSvc.crear(
+      this.pedidoAIncidencia.id,
+      this.tipoIncidencia,
+      this.descripcionIncidencia.trim()
+    ).subscribe({
+      next: (inc) => {
+        const pedido = this.pedidos.find(p => p.id === this.pedidoAIncidencia!.id);
+        if (pedido) pedido.incidencia = inc;
+        this.toast.mostrarExito('Incidencia registrada. Te contactaremos pronto.');
+        this.cerrarModalIncidencia();
+      },
+      error: (err: any) => {
+        this.enviandoIncidencia = false;
+        const mensaje = err.status === 404
+          ? 'El registro de incidencias no está disponible en este momento.'
+          : (err.error?.error ?? 'No se pudo registrar la incidencia.');
         this.toast.mostrarError(mensaje);
         this.cdr.detectChanges();
       }
