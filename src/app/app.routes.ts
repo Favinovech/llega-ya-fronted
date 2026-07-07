@@ -35,6 +35,8 @@ export const routes: Routes = [
   // Solo admin
   { path: 'admin', canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./pages/admin/admin').then(m => m.Admin) },
+  { path: 'admin/pagos', canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./pages/pagos-comisiones/pagos-comisiones').then(m => m.PagosComisiones) },
 
   // Solo repartidor
   { path: 'repartidor', canActivate: [repartidorGuard],
