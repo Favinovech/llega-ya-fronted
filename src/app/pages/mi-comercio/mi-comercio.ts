@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
@@ -9,13 +9,14 @@ import { NegocioService, Negocio } from '../../services/negocio.service';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast';
 import { PedidoService } from '../../services/pedido.service';
+import { ReporteService, ReporteComercio } from '../../services/reporte.service';
 import { environment } from '../../../environments/environment';
 import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
   selector: 'app-mi-comercio',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, Navbar, Footer],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule, Navbar, Footer],
   templateUrl: './mi-comercio.html',
   styleUrl: './mi-comercio.scss'
 })
@@ -54,6 +55,19 @@ export class MiComercio implements OnInit {
     jueves:'Jue', viernes:'Vie', sabado:'Sáb', domingo:'Dom'
   };
 
+  // ── Reportes (HU19) ──────────────────────────────
+  reporte: ReporteComercio | null = null;
+  cargandoReporte = false;
+  errorReporte     = '';
+  reporteDesde     = '';
+  reporteHasta     = '';
+  rangoActivo: number | null = 7;
+  mostrarTablaVentas = false;
+  hoverVenta: { fecha: string; total: number; x: number; y: number } | null = null;
+  private readonly chartW = 600;
+  private readonly chartH = 200;
+  private readonly chartPad = 28;
+
   constructor(
     private negocioSvc: NegocioService,
     private http: HttpClient,
@@ -62,8 +76,15 @@ export class MiComercio implements OnInit {
     private cdr: ChangeDetectorRef,
     private auth: AuthService,
     private toast: ToastService,
-    private pedidoSvc: PedidoService
-  ) {}
+    private pedidoSvc: PedidoService,
+    private reporteSvc: ReporteService
+  ) {
+    const hoy = new Date();
+    const hace7 = new Date();
+    hace7.setDate(hoy.getDate() - 6);
+    this.reporteHasta = hoy.toISOString().slice(0, 10);
+    this.reporteDesde = hace7.toISOString().slice(0, 10);
+  }
 
   ngOnInit() {
     this.negocioSvc.negocio$.subscribe(n => {
@@ -121,6 +142,94 @@ export class MiComercio implements OnInit {
   activarTab(tab: string) {
     this.tabActiva = tab;
     this.editando  = false;
+    if (tab === 'reportes' && !this.reporte && !this.cargandoReporte) {
+      this.cargarReporte();
+    }
+  }
+
+  // ── Reportes (HU19) ──────────────────────────────
+
+  cargarReporte() {
+    this.cargandoReporte = true;
+    this.errorReporte    = '';
+    this.reporteSvc.porComercio(this.reporteDesde, this.reporteHasta).subscribe({
+      next: (data) => {
+        this.reporte = data;
+        this.cargandoReporte = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.errorReporte = 'No se pudo cargar el reporte de ventas.';
+        this.cargandoReporte = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  aplicarRangoReporte(dias: number) {
+    const hoy = new Date();
+    const desde = new Date();
+    desde.setDate(hoy.getDate() - (dias - 1));
+    this.reporteHasta = hoy.toISOString().slice(0, 10);
+    this.reporteDesde = desde.toISOString().slice(0, 10);
+    this.rangoActivo  = dias;
+    this.cargarReporte();
+  }
+
+  aplicarRangoPersonalizado() {
+    this.rangoActivo = null;
+    this.cargarReporte();
+  }
+
+  toggleTablaVentas() {
+    this.mostrarTablaVentas = !this.mostrarTablaVentas;
+  }
+
+  get maxCantidadProducto(): number {
+    const productos = this.reporte?.productos_mas_vendidos ?? [];
+    return productos.length ? Math.max(...productos.map(p => p.cantidad_vendida)) : 0;
+  }
+
+  anchoBarraProducto(cantidad: number): number {
+    const max = this.maxCantidadProducto;
+    return max > 0 ? Math.round((cantidad / max) * 100) : 0;
+  }
+
+  get maxVenta(): number {
+    const ventas = this.reporte?.ventas_por_dia ?? [];
+    return Math.max(1, ...ventas.map(v => v.total));
+  }
+
+  puntoX(i: number): number {
+    const n = this.reporte?.ventas_por_dia.length ?? 0;
+    if (n <= 1) return this.chartW / 2;
+    return this.chartPad + i * ((this.chartW - 2 * this.chartPad) / (n - 1));
+  }
+
+  puntoY(valor: number): number {
+    const max = this.maxVenta;
+    return this.chartH - this.chartPad - (max > 0 ? (valor / max) * (this.chartH - 2 * this.chartPad) : 0);
+  }
+
+  get lineaPath(): string {
+    const ventas = this.reporte?.ventas_por_dia ?? [];
+    if (!ventas.length) return '';
+    return ventas.map((v, i) => `${i === 0 ? 'M' : 'L'} ${this.puntoX(i)} ${this.puntoY(v.total)}`).join(' ');
+  }
+
+  get areaPath(): string {
+    const ventas = this.reporte?.ventas_por_dia ?? [];
+    if (!ventas.length) return '';
+    const base = this.chartH - this.chartPad;
+    return `${this.lineaPath} L ${this.puntoX(ventas.length - 1)} ${base} L ${this.puntoX(0)} ${base} Z`;
+  }
+
+  mostrarTooltipVenta(v: { fecha: string; total: number }, i: number) {
+    this.hoverVenta = { fecha: v.fecha, total: v.total, x: this.puntoX(i), y: this.puntoY(v.total) };
+  }
+
+  ocultarTooltipVenta() {
+    this.hoverVenta = null;
   }
 
   // ── Edición ───────────────────────────────────────
