@@ -233,22 +233,31 @@
             <div class="campo-tarjeta">
               <div class="field">
                 <label>Número de tarjeta</label>
-                <input type="text" placeholder="1234 5678 9012 3456" maxlength="19"/>
+                <input type="text" placeholder="1234 5678 9012 3456" maxlength="19"
+                       [(ngModel)]="tarjetaNumero" name="tarjetaNumero"
+                       (keypress)="soloNumerosInput($event)"/>
               </div>
               <div class="tarjeta-row">
                 <div class="field">
                   <label>Vencimiento</label>
-                  <input type="text" placeholder="MM/AA" maxlength="5"/>
+                  <input type="text" placeholder="MM/AA" maxlength="5"
+                         [(ngModel)]="tarjetaVencimiento" name="tarjetaVencimiento"/>
                 </div>
                 <div class="field">
                   <label>CVV</label>
-                  <input type="text" placeholder="123" maxlength="3"/>
+                  <input type="text" placeholder="123" maxlength="3"
+                         [(ngModel)]="tarjetaCvv" name="tarjetaCvv"
+                         (keypress)="soloNumerosInput($event)"/>
                 </div>
               </div>
               <div class="field">
                 <label>Nombre en la tarjeta</label>
-                <input type="text" placeholder="Como aparece en la tarjeta"/>
+                <input type="text" placeholder="Como aparece en la tarjeta"
+                       [(ngModel)]="tarjetaNombre" name="tarjetaNombre"/>
               </div>
+              @if (!tarjetaValida()) {
+                <p class="tarjeta-hint">Completa todos los campos de la tarjeta con un formato válido.</p>
+              }
             </div>
           }
 
@@ -279,7 +288,7 @@
 
         <div class="modal-actions">
           <button class="btn-ghost" (click)="cerrarModalPago()">Cancelar</button>
-          <button class="btn-pagar-confirm" (click)="confirmarPago()" [disabled]="pagando">
+          <button class="btn-pagar-confirm" (click)="confirmarPago()" [disabled]="pagando || !tarjetaValida()">
             {{ pagando ? 'Procesando...' : 'Confirmar pago' }}
           </button>
         </div>

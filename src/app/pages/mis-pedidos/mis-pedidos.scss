@@ -242,6 +242,7 @@ $font:'Inter','Segoe UI',system-ui,sans-serif;
   }
 }
 .tarjeta-row { display:flex; gap:12px; }
+.tarjeta-hint { margin:0; font-size:.78rem; color:#b45309; }
 .qr-simulado {
   margin-top:16px; display:flex; flex-direction:column; align-items:center; gap:10px;
   .qr-box {
