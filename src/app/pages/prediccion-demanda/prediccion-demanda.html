@@ -1,0 +1,92 @@
+<nav class="navbar">
+  <div class="navbar-logo">LlegaYa — Predicción de Demanda</div>
+  <a routerLink="/admin" class="btn-back">← Volver a admin</a>
+</nav>
+
+<div class="prediccion-content">
+  <h2>🔮 Predicción de Demanda</h2>
+
+  <div class="cargando" *ngIf="cargando">Cargando análisis histórico y predicción...</div>
+
+  <div class="error-msg" *ngIf="errorMsg && !cargando">
+    {{ errorMsg }}
+    <button class="btn-reintentar" (click)="cargarPrediccion()">Reintentar</button>
+  </div>
+
+  <ng-container *ngIf="!cargando && !errorMsg && datos">
+
+    <div class="stat-hero-card">
+      <span class="stat-hero-label">Pedidos previstos para mañana</span>
+      <strong class="stat-hero-value">{{ datos.prediccion_manana }}</strong>
+      <span class="stat-hero-hint">Estimado por el sistema a partir del historial reciente</span>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Histórico y predicción de pedidos</h3>
+        <button class="btn-link" (click)="toggleTabla()">
+          {{ mostrarTabla ? 'Ver gráfico' : 'Ver tabla' }}
+        </button>
+      </div>
+
+      <div class="chart-legend">
+        <span class="leyenda-item"><span class="linea-muestra solida"></span> Histórico (real)</span>
+        <span class="leyenda-item"><span class="linea-muestra punteada"></span> Predicción</span>
+      </div>
+
+      <ng-container *ngIf="!mostrarTabla">
+        <div class="chart-wrap" *ngIf="totalPuntos > 0">
+          <svg class="demanda-chart" viewBox="0 0 600 220" preserveAspectRatio="none">
+            <line class="grid-line" x1="30" y1="190" x2="570" y2="190"/>
+            <line class="linea-hoy" [attr.x1]="xLineaHoy" y1="10" [attr.x2]="xLineaHoy" y2="190"/>
+
+            <path class="linea-historico" [attr.d]="lineaHistoricoPath"></path>
+            <path class="linea-prediccion" [attr.d]="lineaPrediccionPath"></path>
+
+            <ng-container *ngFor="let p of puntosHistoricoChart">
+              <circle class="hit-punto" [attr.cx]="p.x" [attr.cy]="p.y" r="12" tabindex="0"
+                      (mouseenter)="mostrarTooltip(p)" (mouseleave)="ocultarTooltip()"
+                      (focus)="mostrarTooltip(p)" (blur)="ocultarTooltip()"></circle>
+              <circle class="punto punto-historico" [class.activo]="hoverPunto === p"
+                      [attr.cx]="p.x" [attr.cy]="p.y" r="4"></circle>
+            </ng-container>
+
+            <ng-container *ngFor="let p of puntosPrediccionChart">
+              <circle class="hit-punto" [attr.cx]="p.x" [attr.cy]="p.y" r="12" tabindex="0"
+                      (mouseenter)="mostrarTooltip(p)" (mouseleave)="ocultarTooltip()"
+                      (focus)="mostrarTooltip(p)" (blur)="ocultarTooltip()"></circle>
+              <circle class="punto punto-prediccion" [class.activo]="hoverPunto === p"
+                      [attr.cx]="p.x" [attr.cy]="p.y" r="4"></circle>
+            </ng-container>
+          </svg>
+
+          <div class="punto-tooltip" *ngIf="hoverPunto"
+               [style.left.%]="(hoverPunto.x / 600) * 100"
+               [style.top.px]="hoverPunto.y - 10">
+            <strong>{{ hoverPunto.pedidos }} pedidos</strong>
+            <span>{{ hoverPunto.fecha | date:'dd/MM' }} · {{ hoverPunto.esPrediccion ? 'Predicción' : 'Real' }}</span>
+          </div>
+        </div>
+
+        <p class="no-data" *ngIf="totalPuntos === 0">No hay suficientes datos para mostrar el análisis.</p>
+      </ng-container>
+
+      <table class="tabla-demanda" *ngIf="mostrarTabla">
+        <thead><tr><th>Fecha</th><th>Pedidos</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let p of datos.historico">
+            <td>{{ p.fecha | date:'dd/MM/yyyy' }}</td>
+            <td>{{ p.pedidos }}</td>
+            <td><span class="badge-tipo real">Real</span></td>
+          </tr>
+          <tr *ngFor="let p of datos.prediccion">
+            <td>{{ p.fecha | date:'dd/MM/yyyy' }}</td>
+            <td>{{ p.pedidos }}</td>
+            <td><span class="badge-tipo prediccion">Predicción</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </ng-container>
+</div>
