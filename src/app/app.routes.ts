@@ -37,6 +37,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/admin/admin').then(m => m.Admin) },
   { path: 'admin/pagos', canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./pages/pagos-comisiones/pagos-comisiones').then(m => m.PagosComisiones) },
+  { path: 'admin/incidencias', canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./pages/incidencias/incidencias').then(m => m.Incidencias) },
 
   // Solo repartidor
   { path: 'repartidor', canActivate: [repartidorGuard],
