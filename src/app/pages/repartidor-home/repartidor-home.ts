@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { RepartidorService } from '../../services/repartidor.service';
 import { PedidoService } from '../../services/pedido.service';
 import { CalificacionService } from '../../services/calificacion.service';
+import { ToastService } from '../../services/toast';
 import { Footer } from '../components/footer/footer';
 
 @Component({
@@ -38,6 +39,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
 
   promedioCalificacion: number | null = null;
   totalCalificaciones = 0;
+  errorCalificacion = false;
 
   perfilForm!: FormGroup;
 
@@ -69,6 +71,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
     private repartidorSvc: RepartidorService,
     private pedidoSvc: PedidoService,
     private calificacionSvc: CalificacionService,
+    private toast: ToastService,
     private fb: FormBuilder,
     private router: Router
   ) {}
@@ -113,8 +116,14 @@ export class RepartidorHome implements OnInit, OnDestroy {
   }
 
   toggleDisponibilidad() {
+    const anterior = this.disponible;
     this.disponible = !this.disponible;
-    this.repartidorSvc.actualizarPerfil({ disponible: this.disponible }).subscribe();
+    this.repartidorSvc.actualizarPerfil({ disponible: this.disponible }).subscribe({
+      error: () => {
+        this.disponible = anterior;
+        this.toast.mostrarError('No se pudo actualizar tu disponibilidad. Intenta de nuevo.');
+      }
+    });
   }
 
   guardarPerfil() {
@@ -138,12 +147,17 @@ export class RepartidorHome implements OnInit, OnDestroy {
   }
 
   cargarPromedio() {
+    this.errorCalificacion = false;
     this.calificacionSvc.promedioMio().subscribe({
       next: (data) => {
         this.promedioCalificacion = data.promedio;
         this.totalCalificaciones  = data.total;
       },
-      error: () => {}
+      error: () => {
+        this.promedioCalificacion = null;
+        this.totalCalificaciones  = 0;
+        this.errorCalificacion    = true;
+      }
     });
   }
 

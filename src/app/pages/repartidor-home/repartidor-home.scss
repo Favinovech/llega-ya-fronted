@@ -197,6 +197,10 @@ $bg:          #f9fafb;
     font-weight: 700;
     color: $dark;
     text-transform: capitalize;
+
+    &.stat-error {
+      color: #c0392b;
+    }
   }
 
   .stat-label {
