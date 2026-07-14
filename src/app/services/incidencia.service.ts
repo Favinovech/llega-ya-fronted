@@ -47,16 +47,16 @@ export class IncidenciaService {
   constructor(private http: HttpClient) {}
 
   crear(pedidoId: number, tipo: TipoIncidencia, descripcion: string): Observable<Incidencia> {
-    return this.http.post<Incidencia>(`${this.api}/pedidos/${pedidoId}/incidencias/`, { tipo, descripcion });
+    return this.http.post<Incidencia>(`${this.api}/api/pedidos/${pedidoId}/incidencias/`, { tipo, descripcion });
   }
 
   listar(estado?: EstadoIncidencia): Observable<Incidencia[]> {
     let params = new HttpParams();
     if (estado) params = params.set('estado', estado);
-    return this.http.get<Incidencia[]>(`${this.api}/incidencias/`, { params });
+    return this.http.get<Incidencia[]>(`${this.api}/api/pedidos/incidencias/`, { params });
   }
 
   responder(id: number, estado: EstadoIncidencia, respuesta: string): Observable<Incidencia> {
-    return this.http.put<Incidencia>(`${this.api}/incidencias/${id}/responder/`, { estado, respuesta });
+    return this.http.put<Incidencia>(`${this.api}/api/pedidos/incidencias/${id}/responder/`, { estado, respuesta });
   }
 }

@@ -101,7 +101,7 @@ export class Carrito implements OnInit {
       }))
     };
 
-    this.http.post<any>(`${this.api}/pedidos/crear/`, payload).subscribe({
+    this.http.post<any>(`${this.api}/api/pedidos/crear/`, payload).subscribe({
       next: () => {
         this.confirmando = false;
         this.pedidoOk    = true;

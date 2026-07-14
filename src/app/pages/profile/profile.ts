@@ -74,7 +74,7 @@ export class Profile implements OnInit {
   }
 
   cargarPerfil() {
-    this.http.get<any>(`${this.api}/perfil/`).subscribe({
+    this.http.get<any>(`${this.api}/api/usuarios/perfil/`).subscribe({
       next: (data) => {
         this.usuario = data;
         this.fotoUrl = data.foto ?? null;
@@ -127,7 +127,7 @@ export class Profile implements OnInit {
     if (this.editForm.invalid) return;
     this.guardando = true;
 
-    this.http.put<any>(`${this.api}/perfil/`, this.editForm.value).subscribe({
+    this.http.put<any>(`${this.api}/api/usuarios/perfil/`, this.editForm.value).subscribe({
       next: (data) => {
         this.guardando = false;
         this.editando = false;
@@ -163,7 +163,7 @@ export class Profile implements OnInit {
   const formData = new FormData();
   formData.append('foto', file);
 
-  this.http.post<any>(`${this.api}/perfil/foto/`, formData).subscribe({
+  this.http.put<any>(`${this.api}/api/usuarios/perfil/`, formData).subscribe({
       next: (res) => {
         this.subiendoFoto = false;
         this.fotoUrl = res.foto;

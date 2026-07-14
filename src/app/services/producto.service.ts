@@ -32,36 +32,36 @@ export interface HistorialCambio {
 
 @Injectable({ providedIn: 'root' })
 export class ProductoService {
-  private api = `${environment.apiUrl}/negocio`;
+  private api = `${environment.apiUrl}/api/productos`;
 
   constructor(private http: HttpClient) {}
 
   // HU05
   listar(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(`${this.api}/productos/`);
+    return this.http.get<Producto[]>(`${this.api}/`);
   }
   crear(data: Partial<Producto>): Observable<Producto> {
-    return this.http.post<Producto>(`${this.api}/productos/`, data);
+    return this.http.post<Producto>(`${this.api}/crear/`, data);
   }
   obtener(id: number): Observable<Producto> {
-    return this.http.get<Producto>(`${this.api}/productos/${id}/`);
+    return this.http.get<Producto>(`${this.api}/${id}/`);
   }
   actualizar(id: number, data: Partial<Producto>): Observable<any> {
-    return this.http.patch<any>(`${this.api}/productos/${id}/`, data);
+    return this.http.patch<any>(`${this.api}/${id}/`, data);
   }
   eliminar(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.api}/productos/${id}/`);
+    return this.http.delete<any>(`${this.api}/${id}/`);
   }
 
   // HU06
   cambiarPrecio(id: number, precio: number, comentario = ''): Observable<any> {
-    return this.http.patch<any>(`${this.api}/productos/${id}/precio/`, { precio, comentario });
+    return this.http.patch<any>(`${this.api}/${id}/precio/`, { precio, comentario });
   }
   toggleDisponibilidad(id: number): Observable<any> {
-    return this.http.patch<any>(`${this.api}/productos/${id}/disponibilidad/`, {});
+    return this.http.patch<any>(`${this.api}/${id}/disponibilidad/`, {});
   }
   historialDeProducto(id: number): Observable<HistorialCambio[]> {
-    return this.http.get<HistorialCambio[]>(`${this.api}/productos/${id}/historial/`);
+    return this.http.get<HistorialCambio[]>(`${this.api}/${id}/historial/`);
   }
   historialCatalogo(filtros: { tipo?: string; dias?: number } = {}): Observable<HistorialCambio[]> {
     let params = new HttpParams();

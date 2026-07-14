@@ -132,7 +132,7 @@ export class MiComercio implements OnInit {
   }
 
   cargarPedidos() {
-    this.http.get<any[]>(`${this.api}/pedidos/`).subscribe({
+    this.http.get<any[]>(`${this.api}/api/pedidos/`).subscribe({
       next: (data) => this.pedidos = data,
       error: () => {}
     });
@@ -248,7 +248,7 @@ export class MiComercio implements OnInit {
     if (this.editForm.invalid) return;
     this.guardando = true;
 
-    this.http.put<Negocio>(`${this.api}/negocio/`, this.editForm.value).subscribe({
+    this.http.put<Negocio>(`${this.api}/api/negocios/mi-negocio/`, this.editForm.value).subscribe({
       next: (data) => {
         this.guardando = false;
         this.editando  = false;

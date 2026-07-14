@@ -71,7 +71,7 @@ export class Comercios implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.http.get<Negocio[]>(`${this.api}/negocios/`).subscribe({
+    this.http.get<Negocio[]>(`${this.api}/api/negocios/`).subscribe({
       next: (data) => {
         this.negocios = data;
         this.negociosFiltrados = data;
@@ -128,7 +128,7 @@ export class Comercios implements OnInit {
     this.cargandoProds = true;
     this.cdRef.detectChanges();
 
-    this.http.get<Producto[]>(`${this.api}/negocios/${n.id}/productos/`).subscribe({
+    this.http.get<Producto[]>(`${this.api}/api/negocios/${n.id}/productos/`).subscribe({
       next: (data) => {
         this.productos = data;
         this.cargandoProds = false;

@@ -21,7 +21,7 @@ export interface Negocio {
 
 @Injectable({ providedIn: 'root' })
 export class NegocioService {
-  private api = environment.apiUrl;
+  private api = `${environment.apiUrl}/api/negocios`;
 
   // BehaviorSubject: cualquier componente puede suscribirse a cambios
   private negocioSubject = new BehaviorSubject<Negocio | null>(null);
@@ -37,7 +37,7 @@ export class NegocioService {
     return of(this.negocioSubject.value);
     }
     
-    return this.http.get<Negocio>(`${this.api}/negocio/`).pipe(
+    return this.http.get<Negocio>(`${this.api}/mi-negocio/`).pipe(
       tap(n => {
         this.negocioSubject.next(n);
         this.cargado = true;

@@ -37,13 +37,13 @@ export class ReporteService {
   diario(fecha?: string): Observable<ReporteDiario> {
     let params = new HttpParams();
     if (fecha) params = params.set('fecha', fecha);
-    return this.http.get<ReporteDiario>(`${this.api}/reportes/diario/`, { params });
+    return this.http.get<ReporteDiario>(`${this.api}/api/pedidos/reportes/diario/`, { params });
   }
 
   porComercio(desde?: string, hasta?: string): Observable<ReporteComercio> {
     let params = new HttpParams();
     if (desde) params = params.set('desde', desde);
     if (hasta)  params = params.set('hasta', hasta);
-    return this.http.get<ReporteComercio>(`${this.api}/negocio/reporte/`, { params });
+    return this.http.get<ReporteComercio>(`${this.api}/api/negocios/mi-negocio/reporte/`, { params });
   }
 }

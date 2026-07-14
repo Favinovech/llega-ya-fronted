@@ -24,6 +24,6 @@ export class PrediccionService {
     const params = new HttpParams()
       .set('dias_historico', diasHistorico)
       .set('dias_prediccion', diasPrediccion);
-    return this.http.get<PrediccionDemanda>(`${this.api}/predicciones/demanda/`, { params });
+    return this.http.get<PrediccionDemanda>(`${this.api}/api/pedidos/predicciones/demanda/`, { params });
   }
 }

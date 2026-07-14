@@ -107,7 +107,7 @@ export class MisPedidos implements OnInit {
   cargarPedidos() {
     this.cargando = true;
     this.errorMsg = '';
-    this.http.get<Pedido[]>(`${this.api}/pedidos/`).pipe(
+    this.http.get<Pedido[]>(`${this.api}/api/pedidos/`).pipe(
       timeout(20000),
       retry({ count: 2, delay: 1500 }),
       takeUntilDestroyed(this.destroyRef)
@@ -141,7 +141,7 @@ export class MisPedidos implements OnInit {
   confirmarCancelacion() {
     if (!this.pedidoAcancelar) return;
 
-    this.http.put(`${this.api}/pedidos/${this.pedidoAcancelar.id}/cancelar/`, {
+    this.http.put(`${this.api}/api/pedidos/${this.pedidoAcancelar.id}/cancelar/`, {
       motivo: this.motivoCancelacion.trim()
     }).subscribe({
       next: () => {
@@ -279,7 +279,7 @@ export class MisPedidos implements OnInit {
   // ── Modal pago ───────────────────────────────────
 
   abrirModalPago(pedido: Pedido) {
-    this.http.get<any>(`${this.api}/pedidos/${pedido.id}/detalle/`).subscribe({
+    this.http.get<any>(`${this.api}/api/pedidos/${pedido.id}/detalle/`).subscribe({
       next: (detalle) => {
         if (detalle.pago) {
           const idx = this.pedidos.findIndex(p => p.id === pedido.id);
@@ -331,7 +331,7 @@ export class MisPedidos implements OnInit {
     if (!this.pedidoAPagar || this.pagando || !this.tarjetaValida()) return;
     this.pagando = true;
 
-    this.http.post<any>(`${this.api}/pedidos/${this.pedidoAPagar.id}/pagar/`, {
+    this.http.post<any>(`${this.api}/api/pedidos/${this.pedidoAPagar.id}/pagar/`, {
       metodo: this.metodoPago
     }).subscribe({
       next: (res) => {
@@ -346,7 +346,7 @@ export class MisPedidos implements OnInit {
         // Antes de reintentar, re-verificamos el estado real en el servidor:
         // así evitamos permitir un segundo intento de pago sobre un pedido
         // que en realidad sí se llegó a pagar (p. ej. timeout de red).
-        this.http.get<any>(`${this.api}/pedidos/${pedidoId}/detalle/`).subscribe({
+        this.http.get<any>(`${this.api}/api/pedidos/${pedidoId}/detalle/`).subscribe({
           next: (detalle) => {
             this.pagando = false;
             const idx = this.pedidos.findIndex(p => p.id === pedidoId);

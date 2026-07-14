@@ -26,6 +26,6 @@ export class PagoService {
     let params = new HttpParams();
     if (desde) params = params.set('desde', desde);
     if (hasta)  params = params.set('hasta', hasta);
-    return this.http.get<PagoDistribucion[]>(`${this.api}/pagos/`, { params });
+    return this.http.get<PagoDistribucion[]>(`${this.api}/api/pedidos/pagos/`, { params });
   }
 }
