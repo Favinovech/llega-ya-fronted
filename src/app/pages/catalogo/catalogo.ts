@@ -6,6 +6,7 @@ import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
 import { ProductoService, Producto, HistorialCambio } from '../../services/producto.service';
+import { NegocioService } from '../../services/negocio.service';
 import { RegistroValidators, MENSAJES_ERROR, limits } from '../../validators';
 
 @Component({
@@ -62,12 +63,16 @@ export class Catalogo implements OnInit {
 
   constructor(
     private productoService: ProductoService,
+    private negocioService: NegocioService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     this.cargarProductos();
+    if (!this.negocioService.negocioActual) {
+      this.negocioService.cargar().subscribe();
+    }
   }
 
   cargarProductos() {
@@ -168,6 +173,13 @@ export class Catalogo implements OnInit {
     if (p.precio === undefined || p.precio === null || Number(p.precio) <= 0) { this.errorFormulario = 'El precio debe ser mayor a 0.'; return; }
     if (!p.categoria) { this.errorFormulario = 'Selecciona una categoría.'; return; }
 
+    const esEdicion = !!p.id;
+    const negocioId = this.negocioService.negocioActual?.id;
+    if (!esEdicion && !negocioId) {
+      this.errorFormulario = 'No se encontró tu negocio. Recarga la página e intenta de nuevo.';
+      return;
+    }
+
     this.guardandoProducto = true;
     this.errorFormulario = '';
 
@@ -177,6 +189,7 @@ export class Catalogo implements OnInit {
       precio: Number(p.precio),
       categoria: p.categoria,
       disponible: p.disponible ?? true,
+      ...(!esEdicion ? { negocio_id: negocioId } as any : {}),
     };
     const obs = p.id
       ? this.productoService.actualizar(p.id, payload)
@@ -185,16 +198,15 @@ export class Catalogo implements OnInit {
     obs.subscribe({
       next: () => {
         const nombre = p.nombre;
-        const esEdicion = !!p.id;
         this.guardandoProducto = false;
         this.cerrarModalProducto();
         this.cargarProductos();
-        this.toast.mostrarExito(p.id ? `Producto "${nombre}" actualizado.` : `Producto "${nombre}" creado.`);
+        this.toast.mostrarExito(esEdicion ? `Producto "${nombre}" actualizado.` : `Producto "${nombre}" creado.`);
       },
       error: (err) => {
         this.guardandoProducto = false;
         this.errorFormulario =
-          err.error?.error ?? err.error?.nombre?.[0] ?? err.error?.precio?.[0]
+          err.error?.detail ?? err.error?.error ?? err.error?.nombre?.[0] ?? err.error?.precio?.[0]
           ?? 'No se pudo guardar el producto.';
         this.cdr.detectChanges();
       }

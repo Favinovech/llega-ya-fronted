@@ -18,7 +18,7 @@ export class RegistroValidators {
 
   static telefonoPeruano(control: AbstractControl): ValidationErrors | null {
     const valor = control.value ?? '';
-    if (!valor) return null; // opcional
+    if (!valor) return null;
     return /^\d{9}$/.test(valor)
       ? null
       : { telefonoInvalido: true };
@@ -26,7 +26,7 @@ export class RegistroValidators {
 
   static dniPeruano(control: AbstractControl): ValidationErrors | null {
     const valor = control.value ?? '';
-    if (!valor) return null; // opcional
+    if (!valor) return null;
     return /^\d{8}$/.test(valor)
       ? null
       : { dniInvalido: true };
