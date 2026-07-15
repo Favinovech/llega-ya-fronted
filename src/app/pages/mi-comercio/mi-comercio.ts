@@ -132,7 +132,7 @@ export class MiComercio implements OnInit {
   }
 
   cargarPedidos() {
-    this.http.get<any[]>(`${this.api}/api/pedidos/`).subscribe({
+    this.http.get<any[]>(`${this.api}/api/pedidos/negocio/`).subscribe({
       next: (data) => this.pedidos = data,
       error: () => {}
     });

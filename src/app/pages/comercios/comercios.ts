@@ -71,7 +71,7 @@ export class Comercios implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.http.get<Negocio[]>(`${this.api}/api/negocios/`).subscribe({
+    this.http.get<Negocio[]>(`${this.api}/api/negocios/lista/`).subscribe({
       next: (data) => {
         this.negocios = data;
         this.negociosFiltrados = data;
