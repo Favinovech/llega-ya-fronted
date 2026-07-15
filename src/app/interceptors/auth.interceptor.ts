@@ -15,8 +15,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const token = auth.getToken();
 
-  // Siempre enviar la cookie; el access se pega solo si la ruta NO esta excluida.
-  let authReq = req.clone({ withCredentials: true });
+  // Siempre enviar la cookie y el header anti-warning de ngrok (plan free);
+  // el access se pega solo si la ruta NO esta excluida.
+  let authReq = req.clone({
+    withCredentials: true,
+    setHeaders: { 'ngrok-skip-browser-warning': 'true' }
+  });
   if (token && !isExcluded(req.url)) {
     authReq = authReq.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
   }

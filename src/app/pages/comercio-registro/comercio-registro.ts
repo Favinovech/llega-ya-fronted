@@ -172,7 +172,7 @@ export class ComercioRegistro implements OnInit {
       dias_atencion: Array.from(this.diasSeleccionados),
     };
 
-    this.http.post<any>(`${this.api}/negocio/`, payload).subscribe({
+    this.http.post<any>(`${this.api}/api/negocios/mi-negocio/`, payload).subscribe({
       next: () => {
         this.guardando = false;
         this.negocioSvc.refrescar();

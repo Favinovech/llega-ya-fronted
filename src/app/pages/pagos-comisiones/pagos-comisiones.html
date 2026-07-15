@@ -1,0 +1,77 @@
+<nav class="navbar">
+  <div class="navbar-logo">LlegaYa — Pagos y Comisiones</div>
+  <a routerLink="/admin" class="btn-back">← Volver a admin</a>
+</nav>
+
+<div class="pagos-content">
+  <h2>💰 Pagos y Comisiones</h2>
+
+  <div class="filtros">
+    <div class="campo">
+      <label>Desde</label>
+      <input type="date" [(ngModel)]="desde"/>
+    </div>
+    <div class="campo">
+      <label>Hasta</label>
+      <input type="date" [(ngModel)]="hasta"/>
+    </div>
+    <button class="btn-filtrar" (click)="aplicarFiltros()">Filtrar</button>
+    <button class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+    <button class="btn-exportar" (click)="exportarCsv()" [disabled]="!pagos.length">⬇ Exportar CSV</button>
+  </div>
+
+  <div class="cargando" *ngIf="cargando">Cargando pagos...</div>
+
+  <div class="error-msg" *ngIf="errorMsg && !cargando">
+    {{ errorMsg }}
+    <button class="btn-reintentar" (click)="cargarPagos()">Reintentar</button>
+  </div>
+
+  <div class="resumen" *ngIf="!cargando && !errorMsg && pagos.length > 0">
+    <div class="resumen-card">
+      <span class="resumen-label">Total distribuido</span>
+      <strong>S/ {{ totalDistribuido | number:'1.2-2' }}</strong>
+    </div>
+    <div class="resumen-card">
+      <span class="resumen-label">Comisión de plataforma</span>
+      <strong>S/ {{ totalComision | number:'1.2-2' }}</strong>
+    </div>
+    <div class="resumen-card">
+      <span class="resumen-label">N° de pagos</span>
+      <strong>{{ pagos.length }}</strong>
+    </div>
+  </div>
+
+  <table *ngIf="!cargando && !errorMsg && pagos.length > 0">
+    <thead>
+      <tr>
+        <th>Pedido</th>
+        <th>Fecha</th>
+        <th>Método</th>
+        <th>Negocio</th>
+        <th>Repartidor</th>
+        <th>Monto total</th>
+        <th>Comisión</th>
+        <th>Comercio</th>
+        <th>Repartidor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of pagos">
+        <td>#{{ p.pedido }}</td>
+        <td>{{ p.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ p.metodo | titlecase }}</td>
+        <td>{{ p.negocio_nombre || '—' }}</td>
+        <td>{{ p.repartidor_nombre || '—' }}</td>
+        <td>S/ {{ p.monto_total | number:'1.2-2' }}</td>
+        <td>S/ {{ p.comision_plataforma | number:'1.2-2' }}</td>
+        <td>S/ {{ p.monto_comercio | number:'1.2-2' }}</td>
+        <td>S/ {{ p.monto_repartidor | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="no-data" *ngIf="!cargando && !errorMsg && pagos.length === 0">
+    <p>No hay pagos registrados en el rango seleccionado.</p>
+  </div>
+</div>

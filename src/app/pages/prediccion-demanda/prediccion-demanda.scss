@@ -1,0 +1,84 @@
+$verde: #2e7d32; $negro: #111827; $gris: #6b7280; $border: #e5e7eb; $pale: #f0fdf4;
+
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 32px; height: 60px; background: #6fb07f; color: white;
+  .navbar-logo { font-size: 1.2rem; font-weight: 800; }
+}
+.btn-back {
+  color: white; text-decoration: none; background: rgba(255,255,255,.2);
+  padding: 8px 16px; border-radius: 8px; font-size: .9rem;
+  &:hover { background: rgba(255,255,255,.35); }
+}
+.prediccion-content { padding: 40px; display: flex; flex-direction: column; gap: 20px; }
+h2 { margin: 0 0 4px; font-size: 1.4rem; }
+
+.cargando { color: #888; }
+.error-msg {
+  color: #e53935; margin-bottom: 16px; display: flex; gap: 12px; align-items: center;
+}
+.btn-reintentar {
+  background: #e53935; color: white; border: none; padding: 6px 14px;
+  border-radius: 6px; cursor: pointer; font-size: .8rem;
+}
+.no-data { color: $gris; font-size: .88rem; text-align: center; padding: 24px 0; }
+
+.stat-hero-card {
+  background: white; border-radius: 14px; padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  display: flex; flex-direction: column; gap: 4px; max-width: 340px;
+}
+.stat-hero-label { font-size: .8rem; font-weight: 700; color: $gris; letter-spacing: .04em; text-transform: uppercase; }
+.stat-hero-value { font-size: 2rem; font-weight: 900; color: $verde; }
+.stat-hero-hint { font-size: .78rem; color: $gris; }
+
+.card {
+  background: white; border-radius: 14px; padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  h3 { font-size: .97rem; font-weight: 800; color: $negro; margin: 0; }
+}
+.btn-link { background: none; border: none; color: $verde; font-size: .85rem; font-weight: 700; cursor: pointer; }
+
+.chart-legend { display: flex; gap: 18px; }
+.leyenda-item { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: $gris; }
+.linea-muestra {
+  width: 22px; height: 0; border-top: 2px solid $verde; display: inline-block;
+  &.punteada { border-top-style: dashed; }
+}
+
+.chart-wrap { position: relative; }
+.demanda-chart {
+  width: 100%; height: 220px; display: block;
+  .grid-line { stroke: $border; stroke-width: 1; }
+  .linea-hoy { stroke: $gris; stroke-width: 1; stroke-dasharray: 3 3; }
+  .linea-historico { fill: none; stroke: $verde; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .linea-prediccion { fill: none; stroke: $verde; stroke-width: 2; stroke-dasharray: 6 5; stroke-linejoin: round; stroke-linecap: round; }
+  .punto { stroke: white; stroke-width: 2; transition: r .15s;
+    &.punto-historico { fill: $verde; }
+    &.punto-prediccion { fill: white; stroke: $verde; stroke-width: 2; }
+    &.activo { r: 6; }
+  }
+  .hit-punto { fill: transparent; cursor: pointer; }
+}
+.punto-tooltip {
+  position: absolute; transform: translate(-50%,-100%); background: $negro; color: white;
+  padding: 6px 10px; border-radius: 8px; font-size: .75rem; pointer-events: none;
+  display: flex; flex-direction: column; gap: 1px; white-space: nowrap; z-index: 2;
+  strong { font-size: .82rem; }
+  span { color: rgba(255,255,255,.7); }
+}
+
+.tabla-demanda {
+  width: 100%; border-collapse: collapse;
+  th { font-size: .65rem; font-weight: 700; color: $gris; letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px; border-bottom: 1.5px solid $border; text-align: left; }
+  td { padding: 10px; border-bottom: 1px solid #f3f4f6; color: $negro; font-size: .85rem; }
+}
+.badge-tipo {
+  font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+  &.real       { background: $pale; color: $verde; }
+  &.prediccion { background: #eef2ff; color: #4338ca; }
+}

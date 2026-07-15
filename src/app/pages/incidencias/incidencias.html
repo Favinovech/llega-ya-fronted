@@ -1,0 +1,91 @@
+<nav class="navbar">
+  <div class="navbar-logo">LlegaYa — Bandeja de Incidencias</div>
+  <a routerLink="/admin" class="btn-back">← Volver a admin</a>
+</nav>
+
+<div class="incidencias-content">
+  <h2>🛎️ Gestión de Reclamos</h2>
+
+  <div class="filtros">
+    <div class="campo">
+      <label>Estado</label>
+      <select [(ngModel)]="filtroEstado" (change)="filtrarPorEstado()">
+        <option value="">Todos</option>
+        @for (e of estados; track e.value) {
+          <option [value]="e.value">{{ e.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="lista-panel">
+      <div class="cargando" *ngIf="cargando">Cargando incidencias...</div>
+
+      <div class="error-msg" *ngIf="errorMsg && !cargando">
+        {{ errorMsg }}
+        <button class="btn-reintentar" (click)="cargarIncidencias()">Reintentar</button>
+      </div>
+
+      <table *ngIf="!cargando && !errorMsg && incidencias.length > 0">
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Cliente</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inc of incidencias"
+              [class.activa]="incidenciaSeleccionada?.id === inc.id">
+            <td>#{{ inc.pedido }}</td>
+            <td>{{ inc.cliente_nombre || '—' }}</td>
+            <td>{{ etiquetaTipo(inc.tipo) }}</td>
+            <td><span class="badge" [ngClass]="'badge-' + inc.estado">{{ etiquetaEstado(inc.estado) }}</span></td>
+            <td>{{ inc.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td><button class="btn-gestionar" (click)="seleccionarIncidencia(inc)">Gestionar</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="no-data" *ngIf="!cargando && !errorMsg && incidencias.length === 0">
+        <p>No hay incidencias registradas para este filtro.</p>
+      </div>
+    </div>
+
+    <div class="detalle-panel" *ngIf="incidenciaSeleccionada as inc">
+      <div class="detalle-header">
+        <h3>Incidencia — Pedido #{{ inc.pedido }}</h3>
+        <button class="modal-close" (click)="cerrarDetalle()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <p class="detalle-tipo"><strong>Tipo:</strong> {{ etiquetaTipo(inc.tipo) }}</p>
+      <p class="detalle-descripcion">"{{ inc.descripcion }}"</p>
+
+      <div class="field">
+        <label>Estado del reclamo</label>
+        <select [(ngModel)]="estadoEdicion">
+          @for (e of estados; track e.value) {
+            <option [value]="e.value">{{ e.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Respuesta al cliente</label>
+        <textarea [(ngModel)]="respuestaEdicion"
+                  placeholder="Escribe una respuesta para el cliente..."
+                  rows="4"></textarea>
+      </div>
+
+      <button class="btn-guardar-respuesta" (click)="guardarRespuesta()" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : 'Guardar respuesta' }}
+      </button>
+    </div>
+  </div>
+</div>

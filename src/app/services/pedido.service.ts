@@ -40,7 +40,7 @@ export interface Pedido {
 
 @Injectable({ providedIn: 'root' })
 export class PedidoService {
-  private api = environment.apiUrl;
+  private api = `${environment.apiUrl}/api/pedidos`;
 
   // Estado compartido para polling (HU08 - estados en tiempo real)
   private pedidos$ = new BehaviorSubject<Pedido[]>([]);
@@ -50,27 +50,27 @@ export class PedidoService {
   constructor(private http: HttpClient) {}
 
   listar(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.api}/pedidos/`);
+    return this.http.get<Pedido[]>(`${this.api}/`);
   }
 
   obtener(id: number): Observable<Pedido> {
-    return this.http.get<Pedido>(`${this.api}/pedidos/${id}/`);
+    return this.http.get<Pedido>(`${this.api}/${id}/`);
   }
 
   historial(id: number): Observable<HistorialEstado[]> {
-    return this.http.get<HistorialEstado[]>(`${this.api}/pedidos/${id}/historial/`);
+    return this.http.get<HistorialEstado[]>(`${this.api}/${id}/historial/`);
   }
 
   cambiarEstado(id: number, estado: string, comentario = ''): Observable<any> {
-    return this.http.put<any>(`${this.api}/pedidos/${id}/estado/`, { estado, comentario });
+    return this.http.put<any>(`${this.api}/${id}/estado/`, { estado, comentario });
   }
 
   cancelarPedido(id: number, motivo: string = ''): Observable<any> {
-  return this.http.put<any>(`${this.api}/pedidos/${id}/cancelar/`, { motivo });
+  return this.http.put<any>(`${this.api}/${id}/cancelar/`, { motivo });
 }
 
 completarPedido(id: number): Observable<any> {
-  return this.http.put<any>(`${this.api}/pedidos/${id}/completar/`, {});
+  return this.http.put<any>(`${this.api}/${id}/completar/`, {});
 }
 
   /**

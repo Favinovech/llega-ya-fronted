@@ -23,14 +23,14 @@ export class CalificacionService {
   constructor(private http: HttpClient) {}
 
   calificar(pedidoId: number, estrellas: number, comentario: string): Observable<Calificacion> {
-    return this.http.post<Calificacion>(`${this.api}/pedidos/${pedidoId}/calificar/`, { estrellas, comentario });
+    return this.http.post<Calificacion>(`${this.api}/api/pedidos/${pedidoId}/calificar/`, { estrellas, comentario });
   }
 
   obtenerCalificacion(pedidoId: number): Observable<Calificacion> {
-    return this.http.get<Calificacion>(`${this.api}/pedidos/${pedidoId}/calificacion/`);
+    return this.http.get<Calificacion>(`${this.api}/api/pedidos/${pedidoId}/calificacion/`);
   }
 
   promedioMio(): Observable<PromedioCalificacion> {
-    return this.http.get<PromedioCalificacion>(`${this.api}/repartidor/calificaciones/promedio/`);
+    return this.http.get<PromedioCalificacion>(`${this.api}/api/repartidores/calificaciones/promedio/`);
   }
 }

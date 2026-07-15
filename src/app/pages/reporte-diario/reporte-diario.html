@@ -1,0 +1,37 @@
+<nav class="navbar">
+  <div class="navbar-logo">LlegaYa — Reporte Diario</div>
+  <a routerLink="/admin" class="btn-back">← Volver a admin</a>
+</nav>
+
+<div class="reporte-content">
+  <h2>📊 Reporte Diario</h2>
+
+  <div class="filtros">
+    <div class="campo">
+      <label>Fecha</label>
+      <input type="date" [(ngModel)]="fecha" (change)="cargarReporte()"/>
+    </div>
+  </div>
+
+  <div class="cargando" *ngIf="cargando">Cargando reporte...</div>
+
+  <div class="error-msg" *ngIf="errorMsg && !cargando">
+    {{ errorMsg }}
+    <button class="btn-reintentar" (click)="cargarReporte()">Reintentar</button>
+  </div>
+
+  <div class="stats-grid" *ngIf="!cargando && !errorMsg && reporte">
+    <div class="stat-card">
+      <span class="stat-label">Total de pedidos</span>
+      <strong class="stat-value">{{ reporte.total_pedidos }}</strong>
+    </div>
+    <div class="stat-card accent">
+      <span class="stat-label">Ingresos</span>
+      <strong class="stat-value">S/ {{ reporte.ingresos | number:'1.2-2' }}</strong>
+    </div>
+    <div class="stat-card danger">
+      <span class="stat-label">Cancelaciones</span>
+      <strong class="stat-value">{{ reporte.cancelaciones }}</strong>
+    </div>
+  </div>
+</div>

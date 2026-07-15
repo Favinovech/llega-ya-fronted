@@ -242,6 +242,7 @@ $font:'Inter','Segoe UI',system-ui,sans-serif;
   }
 }
 .tarjeta-row { display:flex; gap:12px; }
+.tarjeta-hint { margin:0; font-size:.78rem; color:#b45309; }
 .qr-simulado {
   margin-top:16px; display:flex; flex-direction:column; align-items:center; gap:10px;
   .qr-box {
@@ -279,8 +280,51 @@ $font:'Inter','Segoe UI',system-ui,sans-serif;
   &:hover { background:$verde2; }
 }
 
+// ── Reportar incidencia (HU16) ──────────────────────
+.pedido-footer-incidencia {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:#fef2f2; border-top:1px solid #fecaca; flex-wrap:wrap;
+}
+.incidencia-prompt {
+  display:flex; align-items:center; gap:6px; font-size:.82rem; color:#991b1b;
+  svg { stroke:$danger; flex-shrink:0; }
+}
+.btn-incidencia {
+  background:$danger; color:white; border:none; padding:8px 18px; border-radius:8px;
+  font-size:.83rem; font-weight:700; cursor:pointer; font-family:$font; transition:background .18s;
+  white-space:nowrap;
+  &:hover { background:#b91c1c; }
+}
+
+.incidencia-display {
+  padding:12px 20px; border-top:1px solid #f3f4f6; background:#f9fafb;
+  display:flex; flex-direction:column; gap:6px;
+  &.incidencia-resuelto  { background:$pale; }
+  &.incidencia-rechazado { background:#fef2f2; }
+}
+.inc-header {
+  display:flex; align-items:center; gap:5px; font-size:.75rem; font-weight:700;
+  color:#991b1b; text-transform:uppercase; letter-spacing:.05em;
+}
+.inc-descripcion { font-size:.82rem; color:$gris; font-style:italic; margin:0; }
+.inc-respuesta   { font-size:.82rem; color:$negro; margin:0; }
+
+.field select {
+  width:100%; padding:10px 12px; border:1.5px solid $border; border-radius:8px;
+  outline:none; font-size:.88rem; font-family:$font; color:$negro; background:white;
+  &:focus { border-color:$verde; }
+}
+
+.btn-incidencia-submit {
+  background:$danger; color:white; border:none; padding:10px 22px; border-radius:8px;
+  font-size:.88rem; font-weight:700; cursor:pointer; font-family:$font; transition:background .18s;
+  &:hover:not(:disabled) { background:#b91c1c; }
+  &:disabled { opacity:.5; cursor:not-allowed; }
+}
+
 @media (max-width:600px) {
   .page-hero { padding:40px 20px; }
   .page-body { padding:24px 16px; }
   .pedido-footer-calificar { flex-direction:column; align-items:flex-start; }
+  .pedido-footer-incidencia { flex-direction:column; align-items:flex-start; }
 }

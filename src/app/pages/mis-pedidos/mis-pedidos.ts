@@ -9,8 +9,9 @@ import { Navbar } from '../components/navbar/navbar';
 import { Footer } from '../components/footer/footer';
 import { ToastService } from '../../services/toast';
 import { CalificacionService, Calificacion } from '../../services/calificacion.service';
+import { IncidenciaService, Incidencia, TipoIncidencia, TIPOS_INCIDENCIA } from '../../services/incidencia.service';
 import { environment } from '../../../environments/environment';
-import { limits } from '../../validators';
+import { limits, RegistroValidators } from '../../validators';
 
 interface Pago {
   id: number;
@@ -40,6 +41,7 @@ interface Pedido {
   motivo_cancelacion?: string | null;
   calificacion?: Calificacion | null;
   pago?: Pago | null;
+  incidencia?: Incidencia | null;
 }
 
 @Component({
@@ -70,17 +72,31 @@ export class MisPedidos implements OnInit {
   enviandoCalificacion      = false;
   readonly estrellas        = [1, 2, 3, 4, 5];
   readonly limits = limits;
+  readonly soloNumerosInput = RegistroValidators.soloNumerosInput;
   // Modal pago
   mostrarModalPago  = false;
   pedidoAPagar: Pedido | null = null;
   metodoPago        = 'tarjeta';
   pagando           = false;
   pagoExitoso: Pago | null = null;
+  tarjetaNumero      = '';
+  tarjetaVencimiento = '';
+  tarjetaCvv         = '';
+  tarjetaNombre      = '';
+
+  // Modal incidencia
+  mostrarModalIncidencia  = false;
+  pedidoAIncidencia: Pedido | null = null;
+  tipoIncidencia: TipoIncidencia = 'pedido_no_llego';
+  descripcionIncidencia   = '';
+  enviandoIncidencia      = false;
+  readonly tiposIncidencia = TIPOS_INCIDENCIA;
 
   constructor(
     private http: HttpClient,
     private toast: ToastService,
     private calificacionSvc: CalificacionService,
+    private incidenciaSvc: IncidenciaService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -91,7 +107,7 @@ export class MisPedidos implements OnInit {
   cargarPedidos() {
     this.cargando = true;
     this.errorMsg = '';
-    this.http.get<Pedido[]>(`${this.api}/pedidos/`).pipe(
+    this.http.get<Pedido[]>(`${this.api}/api/pedidos/`).pipe(
       timeout(20000),
       retry({ count: 2, delay: 1500 }),
       takeUntilDestroyed(this.destroyRef)
@@ -125,7 +141,7 @@ export class MisPedidos implements OnInit {
   confirmarCancelacion() {
     if (!this.pedidoAcancelar) return;
 
-    this.http.put(`${this.api}/pedidos/${this.pedidoAcancelar.id}/cancelar/`, {
+    this.http.put(`${this.api}/api/pedidos/${this.pedidoAcancelar.id}/cancelar/`, {
       motivo: this.motivoCancelacion.trim()
     }).subscribe({
       next: () => {
@@ -193,11 +209,69 @@ export class MisPedidos implements OnInit {
         if (pedido) pedido.calificacion = cal;
         this.toast.mostrarExito('¡Gracias por tu calificación!');
         this.cerrarModalCalificacion();
-        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.enviandoCalificacion = false;
-        this.toast.mostrarError(err.error?.error ?? 'No se pudo enviar la calificación.');
+        const mensaje = err.status === 404
+          ? 'La calificación de repartidores no está disponible en este momento.'
+          : (err.error?.error ?? 'No se pudo enviar la calificación.');
+        this.toast.mostrarError(mensaje);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ── Modal incidencia (HU16) ──────────────────────
+
+  puedeReportarIncidencia(pedido: Pedido): boolean {
+    return pedido.estado !== 'cancelado' && !pedido.incidencia;
+  }
+
+  abrirModalIncidencia(pedido: Pedido) {
+    this.pedidoAIncidencia       = pedido;
+    this.tipoIncidencia          = 'pedido_no_llego';
+    this.descripcionIncidencia   = '';
+    this.enviandoIncidencia      = false;
+    this.mostrarModalIncidencia  = true;
+  }
+
+  cerrarModalIncidencia() {
+    this.mostrarModalIncidencia = false;
+    this.cdr.detectChanges();
+  }
+
+  etiquetaEstadoIncidencia(estado: string): string {
+    const mapa: Record<string, string> = {
+      abierto:    'Abierto',
+      en_proceso: 'En proceso',
+      resuelto:   'Resuelto',
+      rechazado:  'Rechazado',
+    };
+    return mapa[estado] ?? estado;
+  }
+
+  enviarIncidencia() {
+    if (!this.pedidoAIncidencia || !this.descripcionIncidencia.trim()) return;
+    this.enviandoIncidencia = true;
+
+    this.incidenciaSvc.crear(
+      this.pedidoAIncidencia.id,
+      this.tipoIncidencia,
+      this.descripcionIncidencia.trim()
+    ).subscribe({
+      next: (inc) => {
+        const pedido = this.pedidos.find(p => p.id === this.pedidoAIncidencia!.id);
+        if (pedido) pedido.incidencia = inc;
+        this.toast.mostrarExito('Incidencia registrada. Te contactaremos pronto.');
+        this.cerrarModalIncidencia();
+      },
+      error: (err: any) => {
+        this.enviandoIncidencia = false;
+        const mensaje = err.status === 404
+          ? 'El registro de incidencias no está disponible en este momento.'
+          : (err.error?.error ?? 'No se pudo registrar la incidencia.');
+        this.toast.mostrarError(mensaje);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -205,7 +279,7 @@ export class MisPedidos implements OnInit {
   // ── Modal pago ───────────────────────────────────
 
   abrirModalPago(pedido: Pedido) {
-    this.http.get<any>(`${this.api}/pedidos/${pedido.id}/detalle/`).subscribe({
+    this.http.get<any>(`${this.api}/api/pedidos/${pedido.id}/detalle/`).subscribe({
       next: (detalle) => {
         if (detalle.pago) {
           const idx = this.pedidos.findIndex(p => p.id === pedido.id);
@@ -218,15 +292,15 @@ export class MisPedidos implements OnInit {
         this.metodoPago       = 'tarjeta';
         this.pagando          = false;
         this.pagoExitoso      = null;
+        this.resetFormularioTarjeta();
         this.mostrarModalPago = true;
         this.cdr.detectChanges();
       },
       error: () => {
-        this.pedidoAPagar     = pedido;
-        this.metodoPago       = 'tarjeta';
-        this.pagando          = false;
-        this.pagoExitoso      = null;
-        this.mostrarModalPago = true;
+        // No se pudo verificar el estado real del pedido: no abrir el modal
+        // para evitar pagar un pedido que ya podría estar pagado.
+        this.toast.mostrarError('No se pudo verificar el estado del pedido. Intenta de nuevo.');
+        this.cdr.detectChanges();
       }
     });
   }
@@ -237,11 +311,27 @@ export class MisPedidos implements OnInit {
     this.cdr.detectChanges();
   }
 
+  resetFormularioTarjeta() {
+    this.tarjetaNumero      = '';
+    this.tarjetaVencimiento = '';
+    this.tarjetaCvv         = '';
+    this.tarjetaNombre      = '';
+  }
+
+  tarjetaValida(): boolean {
+    if (this.metodoPago !== 'tarjeta') return true;
+    const numeroOk = /^\d{16}$/.test(this.tarjetaNumero.replace(/\s/g, ''));
+    const vencimientoOk = /^(0[1-9]|1[0-2])\/\d{2}$/.test(this.tarjetaVencimiento.trim());
+    const cvvOk = /^\d{3}$/.test(this.tarjetaCvv.trim());
+    const nombreOk = this.tarjetaNombre.trim().length > 0;
+    return numeroOk && vencimientoOk && cvvOk && nombreOk;
+  }
+
   confirmarPago() {
-    if (!this.pedidoAPagar || this.pagando) return;
+    if (!this.pedidoAPagar || this.pagando || !this.tarjetaValida()) return;
     this.pagando = true;
 
-    this.http.post<any>(`${this.api}/pedidos/${this.pedidoAPagar.id}/pagar/`, {
+    this.http.post<any>(`${this.api}/api/pedidos/${this.pedidoAPagar.id}/pagar/`, {
       metodo: this.metodoPago
     }).subscribe({
       next: (res) => {
@@ -252,20 +342,28 @@ export class MisPedidos implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        this.pagando = false;
-        if (err.status === 400 && err.error?.error?.includes('ya fue pagado')) {
-          this.http.get<any>(`${this.api}/pedidos/${this.pedidoAPagar!.id}/detalle/`).subscribe({
-            next: (detalle) => {
-              const idx = this.pedidos.findIndex(p => p.id === this.pedidoAPagar!.id);
+        const pedidoId = this.pedidoAPagar!.id;
+        // Antes de reintentar, re-verificamos el estado real en el servidor:
+        // así evitamos permitir un segundo intento de pago sobre un pedido
+        // que en realidad sí se llegó a pagar (p. ej. timeout de red).
+        this.http.get<any>(`${this.api}/api/pedidos/${pedidoId}/detalle/`).subscribe({
+          next: (detalle) => {
+            this.pagando = false;
+            const idx = this.pedidos.findIndex(p => p.id === pedidoId);
+            if (detalle.pago) {
               if (idx !== -1) this.pedidos[idx] = { ...this.pedidos[idx], pago: detalle.pago };
               this.pagoExitoso = detalle.pago;
-              this.cdr.detectChanges();
+            } else {
+              this.toast.mostrarError(err.error?.error ?? 'No se pudo procesar el pago.');
             }
-          });
-        } else {
-          this.toast.mostrarError(err.error?.error ?? 'No se pudo procesar el pago.');
-          this.cdr.detectChanges();
-        }
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.pagando = false;
+            this.toast.mostrarError('No se pudo confirmar el estado del pago. Verifica "Mis Pedidos" antes de reintentar.');
+            this.cdr.detectChanges();
+          }
+        });
       }
     });
   }

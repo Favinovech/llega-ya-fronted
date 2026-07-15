@@ -45,7 +45,7 @@ export class Register {
       nombre:   ['', [Validators.required, Validators.minLength(limits.nombre.min), Validators.maxLength(limits.nombre.max), RegistroValidators.soloLetras]],
       apellido: ['', [Validators.required, Validators.minLength(limits.apellido.min), Validators.maxLength(limits.apellido.max), RegistroValidators.soloLetras]],
       email:    ['', [Validators.required, Validators.email]],
-      telefono: ['', [RegistroValidators.telefonoPeruano]],
+      telefono: ['', [Validators.required, RegistroValidators.telefonoPeruano]],
       password: ['', [Validators.required, Validators.minLength(limits.password.min), Validators.maxLength(limits.password.max), RegistroValidators.contieneNumero]],
       dni:            ['', [RegistroValidators.dniPeruano]],
       vehiculo:       ['moto'],
@@ -58,6 +58,14 @@ export class Register {
     this.errorMessage = '';
     this.exitoMessage = '';
     this.form.reset({ vehiculo: 'moto' });
+
+    const dniControl = this.form.get('dni');
+    if (tipo === 'repartidor') {
+      dniControl?.setValidators([Validators.required, RegistroValidators.dniPeruano]);
+    } else {
+      dniControl?.setValidators([RegistroValidators.dniPeruano]);
+    }
+    dniControl?.updateValueAndValidity();
   }
 
   onSubmit() {

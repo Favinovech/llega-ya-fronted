@@ -17,6 +17,7 @@ export const MENSAJES_ERROR: Record<string, Record<string, string>> = {
     maxlength:    'Máximo 254 caracteres.',
   },
   telefono: {
+    required:         'El celular es obligatorio.',
     telefonoInvalido: 'El celular debe tener exactamente 9 dígitos.',
   },
   password: {
@@ -26,6 +27,7 @@ export const MENSAJES_ERROR: Record<string, Record<string, string>> = {
     sinNumero:    'Debe contener al menos un número.',
   },
   dni: {
+    required:     'El DNI es obligatorio.',
     dniInvalido:  'El DNI debe tener exactamente 8 dígitos.',
   },
   ruc: {

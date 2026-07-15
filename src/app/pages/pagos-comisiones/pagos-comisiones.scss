@@ -1,0 +1,72 @@
+.navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 32px; height: 60px; background: #6fb07f; color: white;
+  .navbar-logo { font-size: 1.2rem; font-weight: 800; }
+}
+.btn-back {
+  color: white; text-decoration: none; background: rgba(255,255,255,.2);
+  padding: 8px 16px; border-radius: 8px; font-size: .9rem;
+  &:hover { background: rgba(255,255,255,.35); }
+}
+.pagos-content { padding: 40px; }
+h2 { margin-bottom: 24px; font-size: 1.4rem; }
+
+.filtros {
+  display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap;
+  margin-bottom: 24px;
+
+  .campo {
+    display: flex; flex-direction: column; gap: 4px;
+    label { font-size: .8rem; color: #555; font-weight: 600; }
+    input {
+      padding: 8px 10px; border-radius: 8px; border: 1.5px solid #ddd;
+      font-size: .85rem;
+    }
+  }
+
+  button {
+    padding: 9px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-size: .85rem; font-weight: 700;
+  }
+  .btn-filtrar  { background: #6fb07f; color: white; }
+  .btn-limpiar  { background: #eee; color: #333; }
+  .btn-exportar {
+    background: #2563eb; color: white;
+    &:disabled { opacity: .5; cursor: not-allowed; }
+  }
+}
+
+.resumen {
+  display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+
+  .resumen-card {
+    background: white; border-radius: 12px; padding: 16px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    display: flex; flex-direction: column; gap: 4px; min-width: 160px;
+
+    .resumen-label { font-size: .78rem; color: #888; }
+    strong { font-size: 1.15rem; color: #222; }
+  }
+}
+
+.cargando { color: #888; }
+.error-msg {
+  color: #e53935; margin-bottom: 16px; display: flex; gap: 12px; align-items: center;
+}
+.btn-reintentar {
+  background: #e53935; color: white; border: none; padding: 6px 14px;
+  border-radius: 6px; cursor: pointer; font-size: .8rem;
+}
+.no-data { color: #888; margin-top: 20px; }
+
+table {
+  width: 100%; border-collapse: collapse; background: white;
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+th {
+  background: #6fb07f; color: white; padding: 14px 16px;
+  text-align: left; font-size: .85rem;
+}
+td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: .9rem; }
+tr:last-child td { border-bottom: none; }
