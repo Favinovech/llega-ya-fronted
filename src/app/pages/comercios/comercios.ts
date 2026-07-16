@@ -128,7 +128,7 @@ export class Comercios implements OnInit {
     this.cargandoProds = true;
     this.cdRef.detectChanges();
 
-    this.http.get<Producto[]>(`${this.api}/api/negocios/${n.id}/productos/`).subscribe({
+    this.http.get<Producto[]>(`${this.api}/api/productos/?negocio_id=${n.id}`).subscribe({
       next: (data) => {
         this.productos = data;
         this.cargandoProds = false;
