@@ -50,7 +50,7 @@ export class PedidoService {
   constructor(private http: HttpClient) {}
 
   listar(): Observable<Pedido[]> {
-    return this.http.get<Pedido[]>(`${this.api}/`);
+    return this.http.get<Pedido[]>(`${this.api}/mis-pedidos/`);
   }
 
   obtener(id: number): Observable<Pedido> {
@@ -66,12 +66,12 @@ export class PedidoService {
   }
 
   cancelarPedido(id: number, motivo: string = ''): Observable<any> {
-  return this.http.put<any>(`${this.api}/${id}/cancelar/`, { motivo });
-}
+    return this.http.put<any>(`${this.api}/${id}/cancelar/`, { motivo });
+  }
 
-completarPedido(id: number): Observable<any> {
-  return this.http.put<any>(`${this.api}/${id}/completar/`, {});
-}
+  completarPedido(id: number): Observable<any> {
+    return this.http.put<any>(`${this.api}/${id}/completar/`, {});
+  }
 
   /**
    * HU08 - Inicia un polling cada N segundos al endpoint /pedidos/.
