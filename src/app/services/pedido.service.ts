@@ -65,12 +65,20 @@ export class PedidoService {
     return this.http.put<any>(`${this.api}/${id}/estado/`, { estado, comentario });
   }
 
-  cancelarPedido(id: number, motivo: string = ''): Observable<any> {
-    return this.http.put<any>(`${this.api}/${id}/cancelar/`, { motivo });
+  cancelarPedido(id: number, motivo = ''): Observable<any> {
+    return this.http.post<any>(
+      `${this.api}/${id}/cancelar/`,
+        {
+          motivo_cancelacion: motivo
+        }
+      );
   }
 
   completarPedido(id: number): Observable<any> {
-    return this.http.put<any>(`${this.api}/${id}/completar/`, {});
+    return this.http.post<any>(
+      `${this.api}/${id}/completar/`,
+      {}
+    );
   }
 
   /**

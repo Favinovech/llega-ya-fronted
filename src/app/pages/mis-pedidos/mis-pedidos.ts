@@ -12,6 +12,7 @@ import { CalificacionService, Calificacion } from '../../services/calificacion.s
 import { IncidenciaService, Incidencia, TipoIncidencia, TIPOS_INCIDENCIA } from '../../services/incidencia.service';
 import { environment } from '../../../environments/environment';
 import { limits, RegistroValidators } from '../../validators';
+import { PedidoService } from '../../services/pedido.service';
 
 interface Pago {
   id: number;
@@ -97,7 +98,8 @@ export class MisPedidos implements OnInit {
     private toast: ToastService,
     private calificacionSvc: CalificacionService,
     private incidenciaSvc: IncidenciaService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private pedidoService: PedidoService
   ) {}
 
   ngOnInit() {
@@ -141,9 +143,12 @@ export class MisPedidos implements OnInit {
   confirmarCancelacion() {
     if (!this.pedidoAcancelar) return;
 
-    this.http.put(`${this.api}/api/pedidos/${this.pedidoAcancelar.id}/cancelar/`, {
-      motivo: this.motivoCancelacion.trim()
-    }).subscribe({
+    this.http.post(
+      `${this.api}/api/pedidos/${this.pedidoAcancelar.id}/cancelar/`,
+      {
+        motivo_cancelacion: this.motivoCancelacion.trim()
+      }
+    ).subscribe({
       next: () => {
         this.toast.mostrarExito('Pedido cancelado correctamente.');
         this.cerrarModal();
