@@ -54,11 +54,17 @@ export class ProductoService {
   }
 
   // HU06
-  cambiarPrecio(id: number, precio: number, comentario = ''): Observable<any> {
-    return this.http.patch<any>(`${this.api}/${id}/precio/`, { precio, comentario });
+  cambiarPrecio(id: number, precio: number, comentario = '') {
+    return this.http.patch<any>(
+      `${this.api}/${id}/actualizar-precio/`,
+      { precio, comentario }
+    );
   }
-  toggleDisponibilidad(id: number): Observable<any> {
-    return this.http.patch<any>(`${this.api}/${id}/disponibilidad/`, {});
+  toggleDisponibilidad(id: number) {
+    return this.http.patch<any>(
+      `${this.api}/${id}/toggle-disponibilidad/`,
+      {}
+    );
   }
   historialDeProducto(id: number): Observable<HistorialCambio[]> {
     return this.http.get<HistorialCambio[]>(`${this.api}/${id}/historial/`);
