@@ -107,7 +107,7 @@ export class MisPedidos implements OnInit {
   cargarPedidos() {
     this.cargando = true;
     this.errorMsg = '';
-    this.http.get<Pedido[]>(`${this.api}/api/pedidos/`).pipe(
+    this.http.get<Pedido[]>(`${this.api}/api/pedidos/mis-pedidos/`).pipe(
       timeout(20000),
       retry({ count: 2, delay: 1500 }),
       takeUntilDestroyed(this.destroyRef)
