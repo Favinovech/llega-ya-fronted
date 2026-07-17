@@ -63,7 +63,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
   }
 
   get totalPedidos(): number {
-    return 0;
+    return this.pedidos.filter((p: any) => p.estado === 'entregado' || p.estado === 'completado').length;
   }
 
   constructor(
