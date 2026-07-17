@@ -163,7 +163,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
 
   cargarPedidos() {
     this.cargandoPedidos = true;
-    this.pedidoSvc.listar().subscribe({
+    this.repartidorSvc.getMisEntregas().subscribe({
       next: (data) => {
         this.pedidos = data;
         this.cargandoPedidos = false;
@@ -202,7 +202,7 @@ export class RepartidorHome implements OnInit, OnDestroy {
   }
 
   private refrescarPedidos() {
-    this.pedidoSvc.listar().subscribe({
+    this.repartidorSvc.getMisEntregas().subscribe({
       next: (data) => { this.pedidos = data; }
     });
   }

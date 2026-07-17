@@ -20,6 +20,10 @@ export class RepartidorService {
   return this.http.get<any[]>(`${this.api}/pedidos-disponibles/`);
   }
 
+  getMisEntregas() {
+  return this.http.get<any[]>(`${environment.apiUrl}/api/pedidos/mis-entregas/`);
+  }
+
   tomarPedido(id: number) {
   return this.http.post<any>(`${this.api}/pedidos/${id}/tomar/`, {});
   }
