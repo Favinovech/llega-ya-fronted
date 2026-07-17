@@ -143,10 +143,11 @@
                 <td>{{ p.direccion_entrega }}</td>
                 <td><span class="estado-badge" [ngClass]="estadoClass(p.estado)">{{ p.estado }}</span></td>
                 <td>
-                  <button class="btn-completar" *ngIf="p.estado === 'pendiente'" (click)="completarPedido(p, $event)">
+                  <button class="btn-completar" *ngIf="p.estado === 'confirmado' || p.estado === 'en_camino'" (click)="completarPedido(p, $event)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
                     Marcar completado
                   </button>
+                  <span class="sin-accion" *ngIf="p.estado === 'pendiente'">Esperando repartidor</span>
                   <ng-container *ngIf="p.estado === 'cancelado'">
                     <span class="badge-cancelado">Cancelado</span>
                     <button class="btn-motivo" *ngIf="p.motivo_cancelacion" (click)="verMotivoCancelacion(p, $event)">Ver motivo</button>
@@ -156,7 +157,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
                     Completado
                   </span>
-                  <span class="sin-accion" *ngIf="!['pendiente','cancelado','completado'].includes(p.estado)">—</span>
+                  <span class="sin-accion" *ngIf="!['pendiente','confirmado','en_camino','cancelado','completado'].includes(p.estado)">—</span>
                 </td>
               </tr>
             </tbody>
